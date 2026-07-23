@@ -1,0 +1,26 @@
+---
+description: For any UI work — render the page, screenshot it at desktop and mobile width, and critique the actual pixels before calling it done.
+globs: ["**/*.tsx", "**/*.jsx", "**/*.vue", "**/*.svelte", "**/*.astro", "**/*.css", "**/*.scss", "**/*.html"]
+alwaysApply: false
+---
+
+# Render and Look (UI)
+
+Don't ship UI you haven't looked at. The gap on weaker models isn't vision — it's that they don't initiate
+the look. One instruction to render-and-inspect moved self-inspection from 15% to 97% in OpenAI's GDPval
+study. Make it a habit, not an afterthought.
+
+For any UI you build or change, before "done":
+1. **Render it** — use the **Browser tool** (Screenshot / navigate / console). It feeds real screenshots to
+   you, not text descriptions. You must initiate it; it won't self-trigger.
+2. **Screenshot desktop AND mobile width**, and actually look at both images.
+3. **Critique the pixels, not the code:**
+   - Did the type hierarchy hold, or flatten in the browser?
+   - Is spacing on a deliberate rhythm, or eyeball-default?
+   - Does it hold at mobile width, or crowd/break/overflow?
+   - Does it look like *this* brief, or the generic version of the category?
+   - Floor: focus visible, contrast real, reduced-motion respected.
+4. **Fix the top 1–3 concrete problems, re-render, re-look.** Confirm the fix landed on screen.
+
+Stop when a render pass surfaces only nitpicks, not structure. If the environment genuinely can't render
+(headless, no browser), say so and fall back to a static review — don't pretend you looked.

@@ -1,0 +1,32 @@
+---
+description: Always-on operating system — plan-lock, verify-before-done, working memory, no early stopping. The floor for every substantial task.
+alwaysApply: true
+---
+
+# Operating System (always on)
+
+The full operating system lives in `AGENTS.md` at the repo root — follow it. This rule is the always-injected
+floor so the core habits fire even on a quick turn.
+
+## The floor
+- **Don't stop early.** Resolve the request fully; end your turn only when you're sure, not at the first
+  plausible draft. Don't stop over token budget.
+- **Decide and document** reasonable assumptions instead of stalling — but surface real contradictions.
+- **Ground every "works"/"done" claim in evidence** (a test run, a render, a diff). Never "this should work."
+- **Minimum viable change.** Simplest thing that fully solves it; touch only what the task needs.
+
+## The loop (substantial tasks)
+1. **Plan-lock** — write a short plan + a constraints checklist from the request before editing; restate the
+   approach in one sentence; **if you deviate, say so out loud and why — never change approach silently**
+   (silent shortcut drift is Composer 2.5's #1 failure).
+2. **Remember** — read/append `WORKING_MEMORY.md` (esp. *failed approaches*).
+3. **Build small**, one checkable unit at a time.
+4. **Look** — for UI, render + screenshot (desktop & mobile) and critique the pixels (see render rule).
+5. **Critic-pass** — before done, validate against a real signal, not introspection. Hunt: under-propagated
+   edits (grep every call site — "fixed 2 of 4" is the classic bug), stubs/reward-hacks, dropped
+   constraints, scope creep.
+6. **Log** durable findings + failed-approaches-and-why back to `WORKING_MEMORY.md`.
+
+## Done means
+Plan steps landed + every constraint ticked + critic-pass clean + you can point to the evidence. Not what you
+believe works — what you showed works.
