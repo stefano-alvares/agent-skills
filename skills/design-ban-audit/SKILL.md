@@ -3,7 +3,7 @@ name: design-ban-audit
 description: >-
   Mechanical grep audit for Stefano's design ban-patterns — the mid-fi tells. Use before calling any UI/CSS
   work done, when auditing an existing frontend for generic-AI aesthetics, or as the ban-list step of
-  fable-standard Protocol 3 / pixel-critique-loop. Origin: the-one-jewellery DESIGN.md audit (June 2026).
+  frontier-gap Protocol 4 (UI) / pixel-critique-loop. Origin: the-one-jewellery DESIGN.md audit (June 2026).
 ---
 
 # Design Ban Audit

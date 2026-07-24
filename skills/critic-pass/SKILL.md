@@ -14,7 +14,7 @@ description: >-
   (read-recall >0.9 but edit-recall <0.5: fixed 2 of 4 call sites), reward-hacked/stub solutions, dropped
   constraints, scope creep. In Claude Code the verification means executing: Bash for tests/build, the
   preview_* tools to render UI, or a dispatched verifier subagent. Composes with verification-before-completion,
-  requesting-code-review, systematic-debugging, working-memory, and pixel-critique-loop. Trigger automatically
+  requesting-code-review, systematic-debugging, frontier-gap, and pixel-critique-loop. Trigger automatically
   whenever about to conclude a task; skip only trivial one-line edits and pure factual questions.
 ---
 
@@ -53,7 +53,8 @@ The adversarial layer on top of your verification tools, not a replacement:
 - `systematic-debugging` — where a confirmed must-fix goes when the cause isn't obvious.
 - `pixel-critique-loop` — critic-pass specialized for UI; its render-and-look loop IS the "run it" step for
   anything visual.
-- `working-memory` — where recurring findings get logged so the same class of bug is pre-empted, not re-found.
+- `frontier-gap` (context strategy, `references/protocols.md`) — recurring findings get logged to
+  `WORKING_MEMORY.md` so the same class of bug is pre-empted, not re-found.
 
 Evidence and citations for every claim above: the `frontier-gap` skill's `references/evidence.md`.
 
@@ -139,7 +140,7 @@ If MUST FIX is empty **and you judged against a real signal** (not a glance), th
 Apply the must-fixes, then re-run / re-render to confirm the fix didn't break something else. A fix you
 didn't verify is a new unreviewed change. Log recurring findings — the failure classes this model keeps
 hitting — to `WORKING_MEMORY.md` under `## Critic notes`, so next time they're pre-empted instead of
-rediscovered. That feedback loop is what `working-memory` is for.
+rediscovered. That feedback loop is frontier-gap's context strategy (Protocol 3, Phase 3).
 
 ## Calibrate effort to stakes
 

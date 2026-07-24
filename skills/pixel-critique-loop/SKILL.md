@@ -38,7 +38,7 @@ This skill is the engine in the middle of your existing stack, not a replacement
 
 Order matters: **pixels → static analysis → correctness.** Polishing a unit that still has a structural rendering problem polishes the wrong thing. Do not re-derive taste rules or re-pin project context here — read `PRODUCT.md` / `DESIGN.md` if present and build to them; that's the taste layer's job.
 
-This is the UI specialization of `critic-pass` (the "run it" step is the render loop) and one of the four forcing functions in the `frontier-gap` family — pair it with `working-memory` for the render log and `model-steering` to keep a weaker model from calling UI done after one screenshot.
+This is the UI specialization of `critic-pass` (the "run it" step is the render loop) and one of the forcing functions in the `frontier-gap` family — pair it with frontier-gap's WORKING_MEMORY.md file for the render log and its per-model floor (`references/model-profiles.md`) to keep a weaker model from calling UI done after one screenshot.
 
 ## Phase 0 — Confirm you can actually see (load-bearing)
 
@@ -90,7 +90,7 @@ Once a unit looks right in the loop:
 
 ## Phase 4 — Attempt log (never repeat a mistake)
 
-A frontier model's persistent-notes advantage is replicable with a plain file — this is the `working-memory` skill's job, and render findings are one of its inputs. Keep them under a `## Render notes` heading in `WORKING_MEMORY.md` (project root, alongside `PRODUCT.md` — don't spawn a second file):
+A frontier model's persistent-notes advantage is replicable with a plain file — this is frontier-gap's context strategy (protocols.md, Protocol 3 Phase 3), and render findings are one of its inputs. Keep them under a `## Render notes` heading in `WORKING_MEMORY.md` (project root, alongside `PRODUCT.md` — don't spawn a second file):
 
 ```
 ## Render notes

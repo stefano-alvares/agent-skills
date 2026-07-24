@@ -72,7 +72,7 @@ to generated UI *and* generated documents. The gap was **initiation**, not visio
   *"Show evidence rather than asserting success… use a verification subagent with a fresh model so the
   agent doing the work isn't the one grading it."*
 
-### C. Persistent notes / failed-approaches log (→ `working-memory`)
+### C. Persistent notes / failed-approaches log (→ protocols.md, context strategy)
 - **[guidance]** Anthropic Fable 5 prompting doc: *"Store one lesson per file with a one-line summary at
   the top. Record corrections and confirmed approaches alike, including why they mattered. Don't save what
   the repo or chat history already records; update an existing note rather than creating a duplicate; delete
@@ -82,7 +82,7 @@ to generated UI *and* generated documents. The gap was **initiation**, not visio
   because "without them, successive sessions will re-attempt the same dead ends." Memory helped Fable 5
   *"three times more than Opus 4.8"* on Anthropic's internal eval.
 
-### D. Anti-early-stop / anti-drift preamble (→ `model-steering`)
+### D. Anti-early-stop / anti-drift preamble (→ model-profiles.md)
 - **[guidance]** OpenAI GPT-5 guide (verbatim): *"You are an agent — please keep going until the user's
   query is completely resolved… Only terminate your turn when you are sure the problem is solved,"* and
   *"Never stop or hand back to the user when you encounter uncertainty."* Plus the self-built rubric:
@@ -110,7 +110,7 @@ to generated UI *and* generated documents. The gap was **initiation**, not visio
 - **Opus (on a rushed pass)** — capable of the full loop but, like any model at lower effort, *"scopes its
   work to what was asked"* and can under-spend; Anthropic's fix is "raise effort rather than prompting
   around it." The forcing functions matter most when effort is low or the model isn't Claude.
-- **Local models (Gemma / GLM)** — drift fastest; `working-memory` carries the most weight for them.
+- **Local models (Gemma / GLM)** — drift fastest; the working-memory file (protocols.md) carries the most weight for them.
 
 ---
 

@@ -24,7 +24,7 @@ draft instead of judging it. Split into phases; the FILE is the handoff, never c
    Output: final artifact.
 
 Rules:
-- Each handoff file must be self-contained — the next phase reads NOTHING else (fable-standard Protocol 1
+- Each handoff file must be self-contained — the next phase reads NOTHING else (frontier-gap Protocol 1
   benchmark: a stranger could execute it).
 - Phase outputs live in the project folder (or scratchpad for throwaway work), named `NN-phase.md`.
 - Verifier phase is externally attributed by construction — it judges "the draft", not "my draft". Don't
