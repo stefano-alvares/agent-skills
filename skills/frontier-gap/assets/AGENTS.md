@@ -67,7 +67,7 @@ Then hunt these specific failure classes — they are the ones these models actu
       classic bug.
 - [ ] **No stubs / reward-hacks.** Does it really solve the problem, or just pass the obvious check —
       hardcoding the expected value, swallowing the error, returning a placeholder? Be honest.
-- [ ] **Constraints all met.** Re-read the original request; tick every constraint from the plan-lock
+- [ ] **Constraints all met.** Re-read the original request; tick every constraint from the locked-plan
       checklist against the output. Did one get quietly dropped?
 - [ ] **No scope creep.** Did machinery nobody asked for sneak in? Cut it.
 
@@ -120,7 +120,7 @@ One file at the repo root. Read on start, append the moment you learn something 
 ```markdown
 # Working Memory — <task>
 ## Status            — where the work actually is, one line, kept current
-## Plan + constraints — the locked plan and the checklist (from plan-lock)
+## Plan + constraints — the locked plan and the checklist
 ## Locked decisions  — [decision] — [one-line why]
 ## Failed approaches — Tried [X] → [what broke]. Don't retry without [what'd change].  ← the load-bearing one
 ## Recurring mistakes — patterns this model keeps hitting, to pre-empt next time
