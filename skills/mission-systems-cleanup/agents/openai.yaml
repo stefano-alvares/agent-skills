@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mission Systems Cleanup"
+  short_description: "Review implementation fit before cleanup"
+  default_prompt: "Use $mission-systems-cleanup to review this implementation for mission fit, system boundaries, redundancy, and cleanup direction before editing."
