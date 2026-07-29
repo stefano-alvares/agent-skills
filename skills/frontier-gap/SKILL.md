@@ -9,7 +9,7 @@ description: >-
   against reality, and doesn't stop early. Weaker models can do all of that; they just don't initiate it —
   one instruction to inspect rendered output moved self-inspection from 15% to 97% of runs (GDPval). This
   skill IS that initiation: it runs the full loop — interpret the request, open the ledger, set the
-  per-model floor, plan by dependency and risk, build with a working-memory file, then route to critic-pass
+  floor, plan by dependency and risk, build with a working-memory file, then route to critic-pass
   / pixel-critique-loop before done. Use at the START of any substantive turn or multi-step implementation
   on any model; also standalone to upgrade a prompt draft (Protocol 1) or to pick the right forcing
   function. Absorbs the former fable-standard, fable-plan, plan-lock, working-memory, and model-steering
@@ -39,9 +39,12 @@ it when actually executing a phase, not before.
 2. **Open the ledger** (Protocol 2) — every ask in a multi-part message, including buried ones
    (parentheticals, "also…", trailing "and clean up X"), numbered. Nothing ends the turn undone,
    undeferred, or undeclined.
-3. **Set the floor** — name the model in play and prepend the preamble that blocks *its* documented
-   failure (silent drift for Composer 2.5, dropped constraints for GPT-5.5, plausible-not-verified for
-   Sonnet 5, rushed pass for Opus): [references/model-profiles.md](references/model-profiles.md).
+3. **Set the floor** — three rules that hold on every task, whatever the stakes. **Don't stop early:**
+   terminate only when the query is completely resolved. **Decide and document, don't stall:** on
+   uncertainty pick the most reasonable assumption, proceed, and record it — don't bounce it back.
+   **Ground progress claims in evidence:** before saying something works, point at the tool result that
+   shows it (file:line, test output, render). Calibrate depth to stakes — a throwaway script gets low
+   effort, an auth or payment path gets high; maximal effort on routine work invites over-engineering.
 4. **Plan** (Protocol 3) — read the code first (no plan before evidence), decompose by dependency and
    risk (riskiest step first as a spike), four-line per-step contract (FILES / PROOF / RISK), green after
    every step. Lock it in one sentence; deviations announced out loud, never silent. Plan the context
@@ -67,8 +70,8 @@ Interpret, ledger, floor, plan, build, look, verify, close. That sequence is the
 | **`lean-build`** | Start of any feature/refactor | Mission fit + simplicity ladder → short build contract; UI exempt from minimalism |
 
 The former `fable-standard`, `fable-plan`, `plan-lock`, `working-memory`, and `model-steering` skills are
-absorbed here (protocols.md and model-profiles.md); `render-loop` is retired — `pixel-critique-loop` is
-the same job.
+absorbed here (protocols.md, plus the floor in step 3); `render-loop` is retired — `pixel-critique-loop`
+is the same job.
 
 ## Calibration
 
@@ -77,11 +80,6 @@ Each forcing function costs tokens and time, and *over*-process is a documented 
 high effort — verification proportional to the cost of an error. The non-negotiable that survives every
 calibration: verification must touch **reality** — a run, a render, a diff, a fresh-context check.
 Introspective "reflect harder" with no external signal makes weaker models *worse* (Huang et al.).
-
-## Deploy outside Claude Code
-
-The whole system ships as a portable `AGENTS.md` + `.cursor/rules` set for Codex, Cursor, and any
-AGENTS.md reader: [references/deploy.md](references/deploy.md).
 
 ## Evolving this system
 

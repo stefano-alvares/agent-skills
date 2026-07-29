@@ -7,11 +7,11 @@ description: >-
   GPT-5.5, local) can do it too but rarely initiate it, and even strong models skip it on a rushed pass. The gap is
   not vision ability — it's initiation. One instruction to inspect rendered output moved self-inspection from 15% to
   97% of runs in OpenAI's GDPval study and erased a class of artifacts affecting half of outputs. This skill is that
-  forcing function. Run it ON TOP OF a taste skill (frontend-design, impeccable, redesign-existing-projects) — they
+  forcing function. Run it ON TOP OF a taste skill (frontend-design, brand-idiom, fidelity-critique) — they
   decide WHAT good looks like; this enforces the did-it-actually-look-right check they don't. Trigger when building,
   replicating, or polishing ANY UI, when implementing a screenshot or Figma reference, or when UI output still feels
-  generic after a taste pass. In Claude Code, drive the preview_* tools (preview_start / preview_screenshot /
-  preview_resize / preview_console_logs) to capture and self-critique. If the environment genuinely can't render and
+  generic after a taste pass. In Claude Code, drive preview_start plus the browser tools (computer
+  screenshot / resize_window / read_console_messages) to capture and self-critique. If the environment genuinely can't render and
   screenshot, this skill says so loudly rather than pretending a screenshot happened.
 ---
 
@@ -38,13 +38,13 @@ This skill is the engine in the middle of your existing stack, not a replacement
 
 Order matters: **pixels → static analysis → correctness.** Polishing a unit that still has a structural rendering problem polishes the wrong thing. Do not re-derive taste rules or re-pin project context here — read `PRODUCT.md` / `DESIGN.md` if present and build to them; that's the taste layer's job.
 
-This is the UI specialization of `critic-pass` (the "run it" step is the render loop) and one of the forcing functions in the `frontier-gap` family — pair it with frontier-gap's WORKING_MEMORY.md file for the render log and its per-model floor (`references/model-profiles.md`) to keep a weaker model from calling UI done after one screenshot.
+This is the UI specialization of `critic-pass` (the "run it" step is the render loop) and one of the forcing functions in the `frontier-gap` family — pair it with frontier-gap's WORKING_MEMORY.md file for the render log.
 
 ## Phase 0 — Confirm you can actually see (load-bearing)
 
 The whole method dies silently if the environment can't render. State honestly what this setup can do before building:
 
-- **Render + screenshot?** In **Claude Code**, the `preview_*` MCP tools are this harness: `preview_start` (dev server), `preview_screenshot`, `preview_resize`, `preview_snapshot`, `preview_console_logs`, `preview_network`, `preview_inspect`. That IS the render loop — prefer it over Bash or generic browser tools. Elsewhere: Cursor browser preview, headless Chromium, a dev server + screenshot step, an artifact preview. Non-negotiable for the real loop.
+- **Render + screenshot?** In **Claude Code**, the Browser-pane toolset is this harness: `preview_start` (dev server by name from `.claude/launch.json`, or a URL), `preview_logs` / `preview_stop`, then `computer` (action `screenshot`, plus `left_click` / `type` / `scroll`), `resize_window`, `read_page`, `read_console_messages`, `read_network_requests`, `javascript_tool`, `navigate`, `form_input`. That IS the render loop — never run a dev server via Bash. Elsewhere: headless Chromium, a dev server + screenshot step, an artifact preview. Non-negotiable for the real loop.
 - **File persistence?** For the attempt log (Phase 4). A real file is best.
 
 If render-and-screenshot is genuinely unavailable, say so plainly — don't fake it:
@@ -63,10 +63,10 @@ Minimum **two full passes** per unit; more while structural problems remain.
 
 **1. Render and capture — actually view both images.**
 In Claude Code:
-- `preview_start` if no server is running; reload with `preview_eval` (`window.location.reload()`) only if HMR isn't already live.
-- `preview_screenshot` at desktop width.
-- `preview_resize` to ~390px → `preview_screenshot` for mobile.
-- When an eyeball check is ambiguous (is that 16px or 24px?), `preview_inspect` the element for exact computed values; `preview_console_logs` / `preview_network` to confirm nothing is silently broken behind a screenshot that *looks* fine.
+- `preview_start` if no server is running; reload with `navigate` to the current URL, or `javascript_tool` (`window.location.reload()`), only if HMR isn't already live.
+- `computer` `{action: "screenshot"}` at desktop width.
+- `resize_window` `{preset: "mobile"}` (375×812) or `{width: 390}` → screenshot again for mobile.
+- When an eyeball check is ambiguous (is that 16px or 24px?), `javascript_tool` with `getComputedStyle` for exact values; `read_console_messages` / `read_network_requests` / `preview_logs` to confirm nothing is silently broken behind a screenshot that *looks* fine.
 
 **2. Critique against the pixels — not the code, not your description of it.** Use these questions verbatim (rubric-following models like GPT-5.5/Codex do far better with the explicit list than with "review this"):
 - Did the rendered hierarchy match the type scale, or did it flatten in the browser?
@@ -86,7 +86,7 @@ Stop a unit's loop when a render pass surfaces only nitpicks, not structure.
 
 Once a unit looks right in the loop:
 1. Run the **taste skill's scored/static critique** (e.g. `impeccable critique`) on the converged unit for code-level anti-patterns the eye misses — a banned font, a card-in-card, a contrast fail the screenshot flattered. Low score → its named findings become new loop inputs, back to Phase 2.
-2. Then a **correctness pass**: does the interactive behavior actually work, not just look right? `preview_click` / `preview_fill` to exercise it, `preview_console_logs` for errors, `preview_snapshot` to confirm state changed. Looking right and being right are different claims.
+2. Then a **correctness pass**: does the interactive behavior actually work, not just look right? `computer` (`left_click` / `type`) or `form_input` to exercise it, `read_console_messages` for errors, `read_page` to confirm state changed. Looking right and being right are different claims.
 
 ## Phase 4 — Attempt log (never repeat a mistake)
 
@@ -108,7 +108,7 @@ State plainly: render passes per unit, taste-skill score if any, what's solid, w
 
 ## Model / harness notes
 
-- **Claude Code (here):** `preview_*` IS the loop — `preview_start` → `preview_screenshot` (desktop) → `preview_resize` 390px → `preview_screenshot` (mobile). The harness's own rule already applies: never ask the user to check manually — verify and share proof (`preview_screenshot` for the user once converged).
+- **Claude Code (here):** the Browser pane IS the loop — `preview_start` → `computer` screenshot (desktop) → `resize_window` mobile → screenshot again. The harness's own rule already applies: never ask the user to check manually — verify and share proof (a final screenshot for the user once converged).
 - **Composer 2.5 (Cursor):** enable browser preview so the capture step is native. Its effort-calibration under-spends on "small" tweaks — push it into the loop explicitly or it calls things done after one render.
 - **GPT-5.5 / Codex:** follows an explicit rubric well — feed Phase 2's questions verbatim rather than "review this."
 - **Gemini CLI / AI Studio:** native multimodal makes reference-screenshot → tokens sharp; AI Studio Build preview is a clean render target.

@@ -82,7 +82,7 @@ to generated UI *and* generated documents. The gap was **initiation**, not visio
   because "without them, successive sessions will re-attempt the same dead ends." Memory helped Fable 5
   *"three times more than Opus 4.8"* on Anthropic's internal eval.
 
-### D. Anti-early-stop / anti-drift preamble (→ model-profiles.md)
+### D. Anti-early-stop / anti-drift preamble (→ SKILL.md step 3, "Set the floor")
 - **[guidance]** OpenAI GPT-5 guide (verbatim): *"You are an agent — please keep going until the user's
   query is completely resolved… Only terminate your turn when you are sure the problem is solved,"* and
   *"Never stop or hand back to the user when you encounter uncertainty."* Plus the self-built rubric:
