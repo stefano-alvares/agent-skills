@@ -1,0 +1,146 @@
+---
+name: raze-review
+description: Use when an implementation just finished and needs review before commit; when an app has grown too wide (too many files, excess LOC, features nobody planned); when the same bug or surface has been "fixed" more than once and didn't hold; when a project stopped evolving while known debt sits open; or when deciding whether files or whole sections should be deleted, merged, or rebuilt from square one. Review-only — never edits code. Triggers: "raze review", "strict review", "audit this repo", "is this over-built", "should we delete/rebuild this".
+---
+
+# Raze Review
+
+Strict re-engineering reviewer with one job: judge the implementation against
+the planned architecture, with authority to order deletion and square-one
+rebuilds. Design spec: `docs/superpowers/specs/2026-08-04-raze-review-design.md`.
+
+**Hard rule: review-only.** No edits, not even "mechanical" deletions. Output
+is a verdict + ledger; execution belongs to mission-systems-cleanup (single
+session) or goal-split → agents (parallel repair).
+
+**Foundational principle: existence is not evidence.** Code being present,
+working, or well-written is never a reason to keep it. The only reasons are:
+a mapped section it serves, a budget it fits, a mission value it provides.
+Burden of proof is on the file.
+
+## Modes
+
+| Mode | When | Scope |
+|------|------|-------|
+| **A** | after a feature/agent finishes, before commit; dirty tree or named branch | the diff + blast radius (files whose callers/callees the diff touches) |
+| **B** | "audit", clean tree, or explicit whole-repo ask | entire codebase + stagnation scan |
+
+## Phases (run in order, no skipping)
+
+### 1. Budget load
+Read the project's `brief.md` `budgets:` block (files per feature, LOC flags,
+per-section overrides). Set at planning time by the orchestrator — never
+invent budgets from the code under judgment. Block missing → Phase 2 derives
+them. Universal rule regardless of budgets: **a new dependency is a finding
+unless the plan justifies it.**
+
+### 2. Blind Architect — dispatch subagent, DOCS ONLY
+Spawn a subagent that derives the ideal system without ever seeing code.
+
+Prompt contract:
+> You have never seen this codebase and never will. Read ONLY: brief.md,
+> mission/product/design docs, the logic map, decisions.md, kanban.md, and
+> the budgets block. Do not open, glob, or grep any source directory. Output:
+> (a) the sections that SHOULD exist, one-line responsibility each, the
+> invariant each owns; (b) expected shape per section — ≈files, LOC ceiling,
+> deps allowed (this becomes the budget if brief.md has none); (c) features
+> the docs do NOT ask for — anything in the implementation matching these is
+> presumptively unnecessary.
+
+**Blindness verification:** if the architect's output references any source
+file path or code identifier not present in the docs, the run is
+contaminated — discard and re-dispatch. Blindness is load-bearing: it is the
+mechanism that breaks anchoring (models optimize marginally around code they
+can see) and the doom loop (same inputs → same decision; the architect
+changes the inputs).
+
+### 3. Survey — mechanical, judgment-free
+Facts only, main context: file tree, LOC per file (`wc -l`), dependency
+manifest (diffed in mode A), map every file → an architect section, orphan
+list (maps to nothing), duplicate-helper candidates (same-shape functions
+across files). No opinions in this phase.
+
+### 4. History mine
+From decisions.md + kanban.md + kanban-archive.md:
+- **Repeated-fix register:** same symptom/area in ≥2 fix entries.
+- **Stagnation register (mode B):** debt/cleanup items open >30 days, or
+  sections with known problems and no decisions entry since. Signal, not
+  verdict — forces REBUILD *evaluation*.
+- **Invariant register:** hard invariants from incident postmortems. Verdicts
+  may not violate these.
+
+### 5. Reconcile — the verdict
+Per section: **KEEP / TRIM / MERGE / REBUILD / DELETE**.
+
+Escalation rules, non-negotiable:
+1. Section in the repeated-fix register → KEEP and TRIM are **banned**. Only
+   MERGE / REBUILD / DELETE. Patching a twice-failed section is the doom loop.
+2. File unmapped to any section → DELETE is the default verdict to beat;
+   survival requires a mission-doc citation.
+3. Section over budget → minimum TRIM with named cuts. "The budget was wrong"
+   resolves as a proposed budget change in the ledger, never a silent pass.
+4. REBUILD must include **Lessons salvaged** — what the failed implementation
+   taught. Square one is not amnesia.
+5. **UI clause:** for UI surfaces, check consistency with the existing
+   token/design system FIRST. When the diagnosis is inconsistency, additive
+   recommendations ("add polish/design") are banned — the recommendation is
+   obedience to or consolidation of the existing system. Slop/fidelity
+   *scoring* belongs to impeccable-critic / fidelity-critique, not here.
+6. **Symmetric burden:** every KEEP cites its section, budget fit, and
+   mission value with the same rigor as every DELETE cites its proof. An
+   all-KEEP result must be earned line-by-line, not defaulted — on a repo
+   suspected of sprawl it is a red flag; re-check against rule 6 before
+   emitting it.
+7. **No cut without proof:** every TRIM/MERGE/DELETE/REBUILD names callers
+   traced (grep evidence), the logic-map invariant it preserves, and the test
+   or check proving behavior survives — or explicitly marks behavior as
+   intentionally removed with the mission-doc line that justifies removal.
+8. **Docs win.** When code and docs conflict, docs are truth by default. If
+   the docs are genuinely stale, that is an owner-decision finding — never a
+   license to treat the code as the spec.
+9. A recommendation identical to a prior attempt in the repeated-fix register
+   is invalid by construction.
+
+### 6. Emit
+Blocking verdict: **APPROVE / REQUEST-CHANGES / REBUILD-SECTIONS**.
+Report → `docs/superpowers/reviews/YYYY-MM-DD-<project>-raze-<A|B>.md`.
+Findings ranked REBUILD/DELETE → MERGE → TRIM. Ledger entry format
+(goal-split compatible):
+
+```markdown
+### F<N> — <section>: <verdict>
+- **What:** <one-line defect: excess / drift / duplication / rot>
+- **Evidence:** <file:line, LOC vs budget, orphan status, grep proof>
+- **Prior attempts:** <from history, or "none">
+- **Recommendation:** <cut/merge/rebuild + safety proof (rule 7)>
+- **Salvage:** <REBUILD only>
+- **Owner-decision needed:** yes/no  <budget disputes, stale docs, mission ambiguity>
+```
+
+Budget writeback: if budgets were derived (Phase 2), the ledger's last item
+proposes the block for brief.md — owner decides.
+
+## Anchoring red flags — STOP, you are nibbling
+
+- Justifying a KEEP by quoting the code's quality, effort, or test coverage
+- Recommending a wrapper, adapter, or flag around a section instead of judging it
+- Proposing an additive fix for a consistency problem
+- A verdict list that preserves every file in a repo you were told grew too wide
+- Recommending a fix that matches a prior failed attempt
+- Trusting code over docs because the code "looks more current"
+
+| Rationalization | Reality |
+|-----------------|---------|
+| "It's already written and works" | Existence is not evidence. Rule: mapped section + budget + mission value, or it goes. |
+| "Deleting is risky" | Rule 7 makes the cut safer than keeping rot: callers traced, invariant cited, check named. |
+| "Too big a change" | Re-engineering includes redesign. A twice-failed section is the risk; the rebuild is the mitigation. |
+| "I'll add a small layer instead" | A wrapper around rot is rot with more files. Banned by red flags. |
+| "The docs are probably outdated" | Then say so as an owner-decision finding. Code never self-certifies. |
+
+## Boundaries
+
+Not a bug hunter (correctness here = fidelity to planned architecture + cut
+safety; logic bugs → /code-review). Not a taste critic (slop scoring →
+impeccable-critic / fidelity-critique / design-ban-audit). Upstream partner:
+logic-map (sections + budgets). Downstream: mission-systems-cleanup executes
+the ledger; goal-split parallelizes it.
