@@ -1,100 +1,97 @@
 ---
 name: frontier-gap
-description: >-
-  The operating system for closing the measurable gap between a frontier agentic model (Claude Fable 5)
-  and whatever model is actually doing the work (Sonnet 5, Opus 4.8, Cursor Composer 2.5, GPT-5.5, a local
-  model, or Claude on a rushed pass). The gap is not single-shot generation (SWE-bench Pro: Fable 80.3%,
-  Opus 69.2%, Sonnet 63.2%) — it is long-horizon habits (FrontierCode Diamond: 29.3% vs 13.4%): a frontier
-  model interprets the goal behind the ask, drops zero threads, plans from evidence, keeps notes, validates
-  against reality, and doesn't stop early. Weaker models can do all of that; they just don't initiate it —
-  one instruction to inspect rendered output moved self-inspection from 15% to 97% of runs (GDPval). This
-  skill IS that initiation: it runs the full loop — interpret the request, open the ledger, set the
-  floor, plan by dependency and risk, build with a working-memory file, then route to critic-pass
-  / pixel-critique-loop before done. Use at the START of any substantive turn or multi-step implementation
-  on any model; also standalone to upgrade a prompt draft (Protocol 1) or to pick the right forcing
-  function. Absorbs the former fable-standard, fable-plan, plan-lock, working-memory, and model-steering
-  skills. Skip for trivial single-ask turns — over-process on small work is itself a failure.
+description: Use at the start of any substantive or multi-step task, on ANY model — frontier on a rushed pass, mid-tier, or small open-source — to force the full frontier work loop: interpret, track every ask, plan from evidence, keep notes, verify against reality, close everything. Use when a model ships the first plausible output, stops early, drops threads from multi-part requests, skips verification, or misses steps it was never told to run. Also use to load a model profile before working with an unfamiliar or weaker model. Skip for trivial single-ask turns — over-process on small work is itself a failure.
 ---
 
 # Frontier Gap
 
-Frontier models are not mainly better at *generating* — on saturated evals Fable 5 is only modestly ahead.
-The gap opens on **hard, long-horizon** work (FrontierCode Diamond: 2.2× Opus), and it comes from habits
-Fable runs on its own: it interprets before acting, **validates against external evidence**, **keeps
-notes**, and **doesn't stop early**. Weaker models have the raw ability for all of it. The gap is
-**initiation** — measured, not vibes: one instruction to render-and-inspect moved self-inspection from
-**15% to 97% of runs** (GDPval). This skill is the forcing function. Citations for every number:
-[references/evidence.md](references/evidence.md) — read it before repeating any "frontier models do X"
-claim.
+A general system for replicating a frontier model's work breakdown on any
+model. The gap between a frontier run and a weak run is not raw generation —
+it is long-horizon habits: interpreting the goal behind the ask, dropping
+zero threads, planning from evidence, keeping notes, validating against
+reality, not stopping early. Any capable model can do all of it; most don't
+*initiate* it. One instruction to inspect rendered output moved
+self-inspection from 15% to 97% of runs (GDPval) — the habits are cheap, the
+initiation is the whole gap. This skill is the initiation. Numbers and
+citations: [references/evidence.md](references/evidence.md).
 
-## The loop
+**This skill orchestrates; it does not implement any phase itself.** Each
+phase routes to the expert skill that owns it. One job: make sure the whole
+loop runs and no step closes without evidence.
 
-Every substantive task runs this sequence. Full protocol detail (the task-spec template, the per-step
-contract, the benchmarks each pass must meet): [references/protocols.md](references/protocols.md) — read
-it when actually executing a phase, not before.
+## The loop — emit as todos, then walk it
 
-1. **Interpret** (Protocol 1) — rewrite the request as a task spec: goal behind the ask, explicit +
-   implicit constraints, done-means, ambiguity forks. A stranger could execute the spec; the user would
-   recognize intent they didn't type.
-2. **Open the ledger** (Protocol 2) — every ask in a multi-part message, including buried ones
-   (parentheticals, "also…", trailing "and clean up X"), numbered. Nothing ends the turn undone,
-   undeferred, or undeclined.
-3. **Set the floor** — three rules that hold on every task, whatever the stakes. **Don't stop early:**
-   terminate only when the query is completely resolved. **Decide and document, don't stall:** on
-   uncertainty pick the most reasonable assumption, proceed, and record it — don't bounce it back.
-   **Ground progress claims in evidence:** before saying something works, point at the tool result that
-   shows it (file:line, test output, render). Calibrate depth to stakes — a throwaway script gets low
-   effort, an auth or payment path gets high; maximal effort on routine work invites over-engineering.
-4. **Plan** (Protocol 3) — read the code first (no plan before evidence), decompose by dependency and
-   risk (riskiest step first as a spike), four-line per-step contract (FILES / PROOF / RISK), green after
-   every step. Lock it in one sentence; deviations announced out loud, never silent. Plan the context
-   strategy: WORKING_MEMORY.md progress file, commit checkpoints, fresh-session handoffs. `lean-build`
-   gates the approach (simplest thing that works) before the plan locks.
-5. **Build** — with the working-memory file open: log locked decisions and failed-approaches-with-why the
-   moment you learn them; re-read on every resume. For UI, Protocol 4: direction → tokens → ban-list →
-   structure → render loop, never code-first.
-6. **Verify** — route to the standalone verifiers before "done": `pixel-critique-loop` for anything
-   rendered (screenshot desktop + mobile, critique the actual pixels), `critic-pass` for everything
-   (external evidence, never introspection — bare self-review measurably *lowers* accuracy). Reviewing
-   someone else's diff instead? Protocol 5: trace, hunt named failure classes, refute before reporting.
-7. **Close the ledger** (Protocol 2) — walk it; only then end the turn.
+At task start, write the loop as an explicit checklist (todo list, working
+file, or printed list — whatever the harness has). A phase without named
+evidence does not get ticked. This externalized checklist IS the
+missed-steps mechanism: a model that must tick steps cannot silently skip
+them.
 
-Interpret, ledger, floor, plan, build, look, verify, close. That sequence is the system.
+| # | Phase | Routes to | Evidence that closes it |
+|---|-------|-----------|-------------------------|
+| 1 | **Interpret + ledger** | `plan-forge` Step 1 (or inline for small tasks) | task spec + numbered ledger of every ask, buried ones included |
+| 2 | **Design** (if shape is open) | brainstorming + `brutal-honesty` | approved design; user's idea kill-tested, not flattered |
+| 3 | **Logic** (if new systems/invariants) | `logic-map` | map with owned invariants + `budgets:` block |
+| 4 | **Plan** | `plan-forge` | locked plan: build contract + per-step FILES/CHANGE/PROOF/RISK |
+| 5 | **Build** | working-memory file; ponytail ambient; UI → design skills | green after every step; decisions + failed-approaches logged as learned |
+| 6 | **Look** (anything rendered) | `pixel-critique-loop` | screenshots desktop + mobile, critiqued against the real pixels |
+| 7 | **Verify** | `critic-pass` / `falsify`; strict review → `raze-review` mode A | external evidence: a run, a render, a diff, a fresh-context check — never introspection |
+| 8 | **Close** | ledger from phase 1 | every item done, deferred-with-reason, or declined-out-loud |
 
-## The family — standalone skills this routes to
+Multi-session work: `goal-split` after phase 4. All reporting in the
+`brutal-honesty` register.
 
-| Skill | Fires when | The habit it imposes |
-|---|---|---|
-| **`critic-pass`** | Before declaring ANY substantive output done | Validate against external evidence (run it / fresh verifier), hunt measured failure classes |
-| **`pixel-critique-loop`** | Building or polishing any UI | Render, screenshot desktop+mobile, critique the pixels — never un-looked-at |
-| **`lean-build`** | Start of any feature/refactor | Mission fit + simplicity ladder → short build contract; UI exempt from minimalism |
+## The floor — three rules that hold in every phase, every model
 
-The former `fable-standard`, `fable-plan`, `plan-lock`, `working-memory`, and `model-steering` skills are
-absorbed here (protocols.md, plus the floor in step 3); `render-loop` is retired — `pixel-critique-loop`
-is the same job.
+1. **Don't stop early.** Terminate only when the query is completely
+   resolved — the ledger is the definition of resolved.
+2. **Decide and document, don't stall.** On uncertainty, take the most
+   reasonable assumption, proceed, record it. Bouncing decidable questions
+   back is a dropped thread with extra steps.
+3. **Ground every progress claim in evidence.** Before saying something
+   works, point at the tool result that shows it (file:line, test output,
+   render). Introspective self-review with no external signal measurably
+   *lowers* accuracy — verification touches reality or it isn't verification.
+
+## Model profiles
+
+Per-model adjustments live in [references/profiles/](references/profiles/) —
+one file per model (`deepseek-v4-flash.md`, `_template.md` for new ones).
+The core loop above never changes per model; profiles only tune **pressure**:
+which phases this model skips when unforced, how hard to force the checklist,
+effort/verbosity dials, context-window cadence for the working-memory file.
+Before driving an unfamiliar model, read its profile; if none exists, run one
+session with the full loop at maximum pressure and write the profile from
+what it skipped (`falsify` keeps its own per-model refutation profiles — link
+rather than duplicate).
+
+Ground profiles in observed behavior first — mem-search real incidents before
+citing benchmarks; session history steers harder than published numbers.
 
 ## Calibration
 
-Name the stakes before choosing depth. A one-line edit gets none of this; an auth path gets all of it.
-Each forcing function costs tokens and time, and *over*-process is a documented frontier-model failure at
-high effort — verification proportional to the cost of an error. The non-negotiable that survives every
-calibration: verification must touch **reality** — a run, a render, a diff, a fresh-context check.
-Introspective "reflect harder" with no external signal makes weaker models *worse* (Huang et al.).
+Name the stakes before choosing depth. A one-line edit gets none of this; an
+auth or data-loss path gets all of it. Every forcing function costs tokens,
+and over-process on small work is a documented failure in its own right. The
+non-negotiable that survives every calibration: verification must touch
+reality.
 
 ## Evolving this system
 
-1. **Ground profiles in the user's own history first** — mem-search real incidents before citing
-   benchmarks; session history steers harder than published numbers.
-2. **Every new/updated skill gets a `~/.claude/skills/` symlink immediately** — an unlinked skill is
-   invisible and gets recreated from scratch (render-loop: 8+ times).
-3. **Append one line to `SCORECARD.md` (this directory) after every substantive session** — model, skills
-   fired, catches, escapes. A skill that catches nothing in 10 sessions gets cut; a recurring escape
-   becomes the next update.
+1. Every new/updated skill gets a `~/.claude/skills/` symlink immediately —
+   an unlinked skill is invisible and gets recreated from scratch.
+2. Append one line to `SCORECARD.md` (this directory) after every
+   substantive session — model, skills fired, catches, escapes. A skill that
+   catches nothing in 10 sessions gets cut; a recurring escape becomes the
+   next update.
+3. A model skipping the same phase twice → update its profile, not the core.
 
 ## What this is NOT
 
-- **Not a parity claim.** The bar is "as close to frontier as this model gets on this task"; naming the
-  shortfall honestly is part of the job.
-- **Not a taste layer.** It enforces *process*. What "good" looks like is the job of the design skills
-  (`fidelity-critique`, `brand-idiom`, `design-ban-audit`, `frontend-design`).
-- **Not free.** Calibrate to stakes (above).
+- **Not a planning skill.** Planning is `plan-forge`; this only makes sure
+  planning happens.
+- **Not a parity claim.** The bar is "as close to frontier as this model
+  gets on this task"; naming the shortfall honestly is part of the job
+  (`brutal-honesty` register).
+- **Not a taste layer.** What "good" looks like belongs to the design skills.
+- **Not free.** Calibrate to stakes.

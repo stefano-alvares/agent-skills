@@ -1,6 +1,6 @@
 ---
 name: logic-map
-description: Turn an app, feature, or spec into a map of its logic — the systems, the invariants each system owns, and the causal chains that must hold for behaviour to be correct — BEFORE choosing or writing code, so implementation becomes a box to fill rather than a thing to invent. Use when starting a feature or app and you want the design right before the code; when comparing two or three ways to split a system and need a reason to pick beyond taste; when a spec, brief, or architecture doc needs turning into something checkable; when you suspect the code and the spec have drifted apart and want the mismatches named; when onboarding onto an unfamiliar codebase and need to understand what it is actually supposed to guarantee; or when the user says "map the logic", "what are the systems here", "plan the logic first", "is this the right architecture", "where do the contracts live", or "the code doesn't matter, get the logic right". Run before frontier-gap Protocol 3 or /phase-plan — those sequence the work, this decides what is correct. Pairs with logic-first-debug, which consumes the same map to locate faults. Skip for a single-file change with no new invariant.
+description: Turn an app, feature, or spec into a map of its logic — the systems, the invariants each system owns, and the causal chains that must hold for behaviour to be correct — BEFORE choosing or writing code, so implementation becomes a box to fill rather than a thing to invent. Use when starting a feature or app and you want the design right before the code; when comparing two or three ways to split a system and need a reason to pick beyond taste; when a spec, brief, or architecture doc needs turning into something checkable; when you suspect the code and the spec have drifted apart and want the mismatches named; when onboarding onto an unfamiliar codebase and need to understand what it is actually supposed to guarantee; or when the user says "map the logic", "what are the systems here", "plan the logic first", "is this the right architecture", "where do the contracts live", or "the code doesn't matter, get the logic right". Run before plan-forge or /phase-plan — those sequence the work, this decides what is correct. Pairs with logic-first-debug, which consumes the same map to locate faults. Skip for a single-file change with no new invariant.
 ---
 
 # Logic Map
@@ -173,9 +173,13 @@ and that person is usually you in three months.
 
 ### Decomposition chosen
 <the split, and the rejected alternatives with one-line reasons>
+
+### Budgets  ← write into the project's brief.md
+<per-section expected shape: ≈files, LOC ceiling, deps allowed — derived from
+the decomposition, never from existing code. raze-review judges against these.>
 ```
 
-Then hand off: `/phase-plan` or `frontier-gap` Protocol 3 turns the map into ordered steps. Each step's
+Then hand off: `/phase-plan` or `plan-forge` turns the map into ordered steps. Each step's
 done-check writes itself from the map — a step is done when the invariant it was supposed to establish
 actually holds, which is a far better check than "tests pass".
 
@@ -207,8 +211,8 @@ by the ownership check, on paper, for the cost of one line.
 | Situation | Skill |
 |---|---|
 | What should this system guarantee, and who owns it | **this one** |
-| In what order do we build it | `/phase-plan`, `frontier-gap` Protocol 3 |
-| Is this the simplest thing that works | `lean-build` — run it on the chosen decomposition |
+| In what order do we build it | `/phase-plan` (project roadmap) or `plan-forge` (session plan) |
+| Did the implementation honor this map | `raze-review` — its blind architect reads this map |
 | Something is broken and we don't know where | `logic-first-debug` — it reads this map |
 | The product behaves wrongly but nothing is broken | `mission-debug` |
 
