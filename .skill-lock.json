@@ -18,6 +18,15 @@
       "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-07-24T04:13:09.871Z",
       "updatedAt": "2026-07-24T04:13:09.871Z"
+    },
+    "graphify": {
+      "source": "Graphify-Labs/graphify",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/Graphify-Labs/graphify.git",
+      "skillPath": "graphify/SKILL.md",
+      "skillFolderHash": "15a9ac6ad05a33c912bdedb796c87706cd1bfea7",
+      "installedAt": "2026-07-30T13:37:12.874Z",
+      "updatedAt": "2026-07-30T13:37:12.874Z"
     }
   },
   "dismissed": {
@@ -38,6 +47,7 @@
     "warp",
     "zed",
     "pi",
-    "claude-code"
+    "claude-code",
+    "hermes-agent"
   ]
 }

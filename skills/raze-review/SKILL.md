@@ -61,6 +61,10 @@ list (maps to nothing), duplicate-helper candidates (same-shape functions
 across files). No opinions in this phase.
 
 ### 4. History mine
+**Implementer self-narrative is not evidence.** Handoff docs, summaries, or
+PR descriptions written by the implementing agent are excluded from every
+phase until after the verdict is emitted.
+
 From decisions.md + kanban.md + kanban-archive.md:
 - **Repeated-fix register:** same symptom/area in ≥2 fix entries.
 - **Stagnation register (mode B):** debt/cleanup items open >30 days, or
@@ -70,7 +74,11 @@ From decisions.md + kanban.md + kanban-archive.md:
   may not violate these.
 
 ### 5. Reconcile — the verdict
-Per section: **KEEP / TRIM / MERGE / REBUILD / DELETE**.
+Per section: **KEEP / TRIM / MERGE / REBUILD / DELETE / REBUILD-SATISFIED**.
+
+REBUILD-SATISFIED: a repeated-fix-register section where the diff under
+review IS the rebuild — structurally different from the failed prior shape
+(rule 9 verified). No repair goal generated; Lessons salvaged still recorded.
 
 Escalation rules, non-negotiable:
 1. Section in the repeated-fix register → KEEP and TRIM are **banned**. Only
@@ -104,8 +112,12 @@ Escalation rules, non-negotiable:
 ### 6. Emit
 Blocking verdict: **APPROVE / REQUEST-CHANGES / REBUILD-SECTIONS**.
 Report → `docs/superpowers/reviews/YYYY-MM-DD-<project>-raze-<A|B>.md`.
-Findings ranked REBUILD/DELETE → MERGE → TRIM. Ledger entry format
-(goal-split compatible):
+Findings ranked by verdict class — REBUILD/DELETE, then MERGE, then TRIM —
+never by discovery order. The report also carries an **Accepted deviations**
+section (separate from findings): a spec deviation qualifies only when the
+doc was amended in the same change AND both directions are tested — that is
+documented convergence, not a finding. Ledger entry format (goal-split
+compatible):
 
 ```markdown
 ### F<N> — <section>: <verdict>
@@ -119,6 +131,23 @@ Findings ranked REBUILD/DELETE → MERGE → TRIM. Ledger entry format
 
 Budget writeback: if budgets were derived (Phase 2), the ledger's last item
 proposes the block for brief.md — owner decides.
+
+## Honesty contract
+
+**REQUIRED SUB-SKILL: brutal-honesty** governs every verdict and report line.
+Raze-review-specific applications:
+
+- Findings are declarative. "Might consider", "could potentially", "it may be
+  worth" are banned in verdicts — a finding states what is wrong and what to
+  do.
+- Every verdict carries confidence (high/medium/low) + the evidence that
+  would flip it. A low-confidence DELETE stays a DELETE with its condition
+  named — it does not soften to KEEP.
+- Anything scope prevented checking is listed **UNVERIFIED** in the report.
+  Silence about an unchecked area is a lie of omission.
+- Bad news leads: the blocking verdict and worst findings open the report.
+  An APPROVE must not read as praise — it is "no finding survived", nothing
+  more.
 
 ## Anchoring red flags — STOP, you are nibbling
 

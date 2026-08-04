@@ -1,6 +1,6 @@
 ---
 name: mission-debug
-description: Diagnose product behaviors that "feel wrong" — flow, explanations, AI outputs, generated content, teaching quality, tone — by tracing the felt symptom to the exact contract, prompt, schema, state rule, or UI affordance that FORCES it, then judging the root cause against the product's own mission docs. Use whenever the user says something "feels wrong/off/broken" about how their app behaves (not crashes), reports that an AI feature misunderstands users or explains badly, asks why a flow is frustrating, wants a "big repair" of product behavior, or asks to find more behaviors like a known-bad one. Also use before rewriting prompts or UX copy in response to a complaint — the wrongness usually lives one layer below where it is felt, and this skill finds that layer first. Not for crashes, test failures, or stack traces (use systematic-debugging) and not for code-structure cleanup (use mission-systems-cleanup).
+description: Diagnose product behaviors that "feel wrong" — flow, explanations, AI outputs, generated content, teaching quality, tone — by tracing the felt symptom to the exact contract, prompt, schema, state rule, or UI affordance that FORCES it, then judging the root cause against the product's own mission docs. Use whenever the user says something "feels wrong/off/broken" about how their app behaves (not crashes), reports that an AI feature misunderstands users or explains badly, asks why a flow is frustrating, wants a "big repair" of product behavior, or asks to find more behaviors like a known-bad one. Also use before rewriting prompts or UX copy in response to a complaint — the wrongness usually lives one layer below where it is felt, and this skill finds that layer first. Not for crashes, test failures, or stack traces — use logic-first-debug when the fault location is unknown or spans systems, systematic-debugging when it is already local — and not for code-structure cleanup (use mission-systems-cleanup).
 ---
 
 # Mission Debug
@@ -56,7 +56,11 @@ If a behavior is annoying but breaks no promise, say so and rank it low. Mission
 
 A forcing mechanism is never used once. Before writing the report:
 
-- Grep every consumer of the same contract/schema — do they force the same wrongness elsewhere?
+- Grep every consumer of the same contract/schema — do they force the same wrongness elsewhere? Sweep the
+  whole compile scope (tests, scripts, eval harnesses), not just runtime paths.
+- Record each consumer's **failure mode** — hard-fail vs catch-and-degrade. A consumer that swallows the
+  fault (logs a warning, continues with empty data) is a *worse* finding than one that breaks: it ships
+  the wrongness silently, and no one reports it.
 - Every surface sharing the same prompt style or missing constraint (no voice contract in prompt A → check prompts B–F).
 - Every flow shaped like the broken one (if Reason dumps five corrections, check review/transfer/explain feedback too).
 - List suspected siblings you did NOT walk, explicitly, so the sweep is honest about its coverage.
@@ -94,3 +98,9 @@ Symptom: *"the AI needs you to be very specific and sometimes doesn't understand
 | "Users should be more specific" | The surface assumes the skill the product exists to build. That's the bug. |
 | "Add a tooltip explaining it" | Explaining a wrong behavior is not repairing it. |
 | "This one's obvious, skip the walk" | Un-walked diagnoses produce plausible-but-wrong roots. The walk is the evidence. |
+
+## Sibling
+
+`logic-first-debug` is the same move — find the layer that *forces* the outcome — aimed at technical logic
+instead of product promises. If a felt-wrongness turns out to be a genuine defect in a causal chain rather
+than an unspecified promise, switch to it.
