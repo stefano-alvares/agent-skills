@@ -171,5 +171,8 @@ Raze-review-specific applications:
 Not a bug hunter (correctness here = fidelity to planned architecture + cut
 safety; logic bugs → /code-review). Not a taste critic (slop scoring →
 impeccable-critic / fidelity-critique / design-ban-audit). Upstream partner:
-logic-map (sections + budgets). Downstream: mission-systems-cleanup executes
-the ledger; goal-split parallelizes it.
+logic-map (sections + budgets). Downstream repair routing — the review is
+done, do NOT re-review: 1–3 mechanical findings → fix in a fresh session
+under mission-systems-cleanup's implementation rules (skip its review half);
+larger ledger or any REBUILD → plan-forge with the report as backlog;
+multi-session wave → goal-split (ledger is already goal-split compatible).
