@@ -1,6 +1,6 @@
 ---
 name: fidelity-critique
-description: Scores UI work on a low-fi → high-fi ladder with evidence-cited grades, and names the single commitment that would move it up a level. Not AI-slop detection (impeccable owns that) — this measures COMMITMENT: physical premise, signature mechanics, token discipline, register grammar, fallback completeness. Use whenever the user asks "is this high fidelity yet?", "why does this look mid-fi / generic / like a template?", "critique fidelity", "how do I get this from low-fi to hi-fi", or when UI work is about to be called done and no fidelity check has run. Also use to DEFINE fidelity targets before building. Works on any frontend codebase.
+description: "Scores UI work on a low-fi → high-fi ladder with evidence-cited grades, and names the single commitment that would move it up a level. Not AI-slop detection (impeccable owns that) — this measures COMMITMENT: physical premise, signature mechanics, token discipline, register grammar, fallback completeness. Use whenever the user asks \"is this high fidelity yet?\", \"why does this look mid-fi / generic / like a template?\", \"critique fidelity\", \"how do I get this from low-fi to hi-fi\", or when UI work is about to be called done and no fidelity check has run. Also use to DEFINE fidelity targets before building. Works on any frontend codebase."
 ---
 
 > **Not installed as a skill.** The `fidelity-critique` *subagent*

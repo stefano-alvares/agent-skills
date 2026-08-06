@@ -1,6 +1,6 @@
 ---
 name: raze-review
-description: Use when an implementation just finished and needs review before commit; when an app has grown too wide (too many files, excess LOC, features nobody planned); when the same bug or surface has been "fixed" more than once and didn't hold; when a project stopped evolving while known debt sits open; or when deciding whether files or whole sections should be deleted, merged, or rebuilt from square one. Review-only — never edits code. Triggers: "raze review", "strict review", "audit this repo", "is this over-built", "should we delete/rebuild this".
+description: "Use when an implementation just finished and needs review before commit; when an app has grown too wide (too many files, excess LOC, features nobody planned); when the same bug or surface has been \"fixed\" more than once and didn't hold; when a project stopped evolving while known debt sits open; or when deciding whether files or whole sections should be deleted, merged, or rebuilt from square one. Review-only — never edits code. Triggers: \"raze review\", \"strict review\", \"audit this repo\", \"is this over-built\", \"should we delete/rebuild this\"."
 ---
 
 # Raze Review

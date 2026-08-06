@@ -1,6 +1,6 @@
 ---
 name: plan-forge
-description: Use when a feature, refactor, repair wave, or multi-file change needs a plan before implementation — at the start of any substantive session-level work, when the user says "plan this", "make a plan", "how should we build this", or hands over an approved design/spec to execute. Session-level plans only: project-level roadmaps belong to /phase-plan + planning-standard.md. Skip for single-file trivial changes — a plan for a one-liner is process theater.
+description: "Use when a feature, refactor, repair wave, or multi-file change needs a plan before implementation — at the start of any substantive session-level work, when the user says \"plan this\", \"make a plan\", \"how should we build this\", or hands over an approved design/spec to execute. Session-level plans only: project-level roadmaps belong to /phase-plan + planning-standard.md. Skip for single-file trivial changes — a plan for a one-liner is process theater."
 ---
 
 # Plan Forge

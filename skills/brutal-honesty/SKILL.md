@@ -1,6 +1,6 @@
 ---
 name: brutal-honesty
-description: Use when brainstorming or evaluating ideas (especially the user's own), reviewing a plan or implementation, writing any verdict or report, claiming work is complete, or whenever about to agree with pushback or open with praise. Counters sycophancy: softened findings, compliment padding, position flips without new evidence, buried failures, unearned superlatives. Triggers: "be honest", "push back", "don't just agree", "is this actually good", plan/design/code review, brainstorming sessions.
+description: "Use when brainstorming or evaluating ideas (especially the user's own), reviewing a plan or implementation, writing any verdict or report, claiming work is complete, or whenever about to agree with pushback or open with praise. Counters sycophancy: softened findings, compliment padding, position flips without new evidence, buried failures, unearned superlatives. Triggers: \"be honest\", \"push back\", \"don't just agree\", \"is this actually good\", plan/design/code review, brainstorming sessions."
 ---
 
 # Brutal Honesty

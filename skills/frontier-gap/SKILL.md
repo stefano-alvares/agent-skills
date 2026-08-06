@@ -1,6 +1,6 @@
 ---
 name: frontier-gap
-description: Use at the start of any substantive or multi-step task, on ANY model — frontier on a rushed pass, mid-tier, or small open-source — to force the full frontier work loop: interpret, track every ask, plan from evidence, keep notes, verify against reality, close everything. Use when a model ships the first plausible output, stops early, drops threads from multi-part requests, skips verification, or misses steps it was never told to run. Also use to load a model profile before working with an unfamiliar or weaker model. Skip for trivial single-ask turns — over-process on small work is itself a failure.
+description: "Use at the start of any substantive or multi-step task, on ANY model — frontier on a rushed pass, mid-tier, or small open-source — to force the full frontier work loop: interpret, track every ask, plan from evidence, keep notes, verify against reality, close everything. Use when a model ships the first plausible output, stops early, drops threads from multi-part requests, skips verification, or misses steps it was never told to run. Also use to load a model profile before working with an unfamiliar or weaker model. Skip for trivial single-ask turns — over-process on small work is itself a failure."
 ---
 
 # Frontier Gap
