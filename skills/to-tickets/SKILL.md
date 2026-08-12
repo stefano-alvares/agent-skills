@@ -74,9 +74,13 @@ Do NOT close or modify any parent issue.
 
 **Blocked by:** the numbers/titles of the tickets that gate this one, or "None — can start immediately".
 
+**Owner:** agent, or operator(<the named human action — a DB write, a download, a spend approval>).
+
+**Gate:** spend / DB write / decision(<whose>) / none.
+
 **Status:** ready-for-agent
 
-- [ ] Acceptance criterion 1
+- [ ] Acceptance criterion 1 — a runnable command or observable fact, never "looks right"
 - [ ] Acceptance criterion 2
 
 </local-ticket-template>
@@ -99,6 +103,10 @@ The end-to-end behaviour this ticket makes work, from the user's perspective —
 ## Blocked by
 
 - A reference to each blocking ticket, or "None — can start immediately".
+
+## Owner / Gate
+
+- Owner: agent, or operator(<the named human action>). Gate: spend / DB write / decision(<whose>) / none.
 
 </issue-template>
 
