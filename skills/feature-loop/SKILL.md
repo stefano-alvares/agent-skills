@@ -3,11 +3,11 @@ name: feature-loop
 description: Use when Stefano asks to run one bounded feature through the Feature Loop pipeline, when a coordinator session must run or resume a tick against the Feature Loop Control Plane in Notion, or when a Feature row sits in any Feature Loop state awaiting a gate, execution, review, repair, or disposition. Read the full body before acting; the description does not describe the procedure.
 disable-model-invocation: true
 argument-hint: "Feature request and repository"
-version: 0.7.0
+version: 0.8.0
 created_by: agent
 ---
 
-# Feature Loop v0.7
+# Feature Loop v0.8
 
 ## North star
 
@@ -83,6 +83,8 @@ Intake the feature and fill `templates/ship-spec.md`; the BLUF (≤8 lines) is r
 
 Every erratum notifies Stefano. Scope, spend, and authorization changes are never errata — those stay new spec version + new flip. A digest proves you are executing the approved document; only errata make it honest about being wrong.
 
+**The errata path survives the feature's end.** A correction discovered after the feature is terminal lands the same way: erratum on the approval page. When the correction must also live in the spec file for future readers (a revision-log entry), the file edit is legal only WITH a same-tick erratum recording the file's new digest as a post-execution revision. An in-file "divergence is deliberate" note without the page erratum is the waiver-note failure mode — three real instances forced this rule.
+
 **Founder override.** A mid-flight instruction from Stefano that changes the spec is a same-turn revision: edit the file, recompute the digest, refresh the mirror, he flips in the same exchange — he is present by definition. A waiver note instructing readers to ignore a fail-closed condition is itself a fail-closed condition.
 
 **Digest binding.** Execution requires Decision=Approved AND digest equality, recomputed from the file at every tick against the approval page's Digest. The approval page is the digest authority; Feature row digests are mirrors, cross-checked but never governing. In-file "Status:" lines are non-authoritative — they sit inside the digested bytes.
@@ -125,11 +127,13 @@ Awaiting the gate is a noop tick: the /loop dynamic wakeup parks, ~30-minute spa
 
 At most one mutating worker per file. Tickets may run in parallel, each in its own worktree, only when their envelopes are disjoint across BOTH declared paths AND effect surfaces — lockfiles, generated files, caches, anything an allowed command can write. Any shared effect surface → serial. Set TicketRunning before launch; a TicketRunning row with no live worker in the session reconstructs as stopped-recoverable. Worktree output integrates onto the feature branch serially, coordinator-committed — the coordinator holds commit authority on the feature branch, nothing else — and proofs count only on the integrated state. Select only a ticket with State=TicketApproved whose every Depends On is TicketCompleted and Attempts < Attempt Cap. The worker: agent type `feature-loop-worker`, isolated git worktree, envelope prompt naming allowed paths, allowed commands, proof obligations, attempt context, stop conditions. A blocked ticket stops only its path; another already-approved ready ticket in the same feature may still run; otherwise consolidate one decision packet (`templates/decision-packet.md`) and park.
 
+**The operator-batch wave.** A wave whose tickets are operator-gated batch operations — paid extraction runs, DB writes under a leased-writer rule — may be entirely coordinator-run: the spec declares it, worker isolation is N/A by that declaration, and containment is the substitute baseline plus serialized execution. A strictly linear coordinator wave may carry its execution order in Envelope text instead of Depends On relations; the order stays store-visible either way.
+
 **Worker returns: done, blocked, envelope-wrong, stopped-recoverable.** A worker that can show its envelope, stop condition, or proof obligation is itself wrong — an impossible instruction, a proof broader than its finding, a stop condition a correct fix must breach — returns `envelope-wrong` with a proposed amendment and reasoning. Access it NEEDS but was not granted is envelope-wrong; access it TAKES is a fail-closed violation. The coordinator logs the return verbatim on the ticket row, then rules: accept → amendment erratum, amend, relaunch; reject → the worker complies or blocks. An accepted amendment that narrows a proof obligation states what the narrowed proof no longer covers, and the final reviewer receives the full amendment list as frozen context. A correct worker never has to choose between violating its envelope and stalling — and the coordinator never silently amends a ticket a worker flagged nothing about.
 
 ## Evidence gate
 
-The coordinator independently runs or inspects the ticket's named proof before setting TicketCompleted. Worker confidence alone advances nothing. Record proof output in the ticket's Evidence field.
+The coordinator independently runs or inspects the ticket's named proof before setting TicketCompleted. Worker confidence alone advances nothing. Record proof output in the ticket's Evidence field. Completion also checks the diff against the ticket's envelope in both directions — every named deliverable present, nothing outside it. The proof answers "does it work"; the envelope check answers "is it all there" — a green proof with a missing named deliverable is an incomplete ticket, not a done one.
 
 **The absence law.** An absence-based claim — "no matches", "zero failures", "nothing refused", "no_issue_found" — needs proof the measurement happened. "None found" cannot on its own distinguish *nothing matched* from *nothing was searched*. Known instances, all hit in real runs:
 

@@ -3,7 +3,7 @@
 Run this checklist at every tick, in any session, before any other action. Never trust conversation memory.
 
 0. Preflight: verify the `feature-loop-worker` agent type is available AND the deny rules are loaded (user-level or project-level). Either absent → STOP: "install the user-level agent def + deny rules, then restart the session."
-1. Re-read the Features, Approvals, and Tickets databases.
+1. Re-read the Features, Approvals, and Tickets databases. A row contradicted by git/GitHub reality — a merged branch still marked unmerged, a completed ticket still TicketApproved — is reconciled first, with the reconciliation and its evidence logged on that feature's page.
 2. Terminal check: a feature whose State is ReviewReported, Merged, Released, Stopped, or Cancelled never ticks. Only an explicit Stefano disposition decision reopens it. Skip all remaining steps for terminal features.
 3. Recompute the spec digest (SHA-256) from the spec file.
 4. Compare the file digest to the approval page's Digest property — that equality alone gates execution. The page-body mirror (the body above the first `## Errata` heading) is advisory: divergence → repair the mirror from the file and log the repair; never execute from the mirror.
@@ -23,13 +23,13 @@ Run this checklist at every tick, in any session, before any other action. Never
 18. Run or inspect the ticket's named proof yourself, under the absence law (SKILL.md, Evidence gate).
 19. Proof passes → set TicketCompleted and record the proof output in Evidence.
 20. Proof fails → increment Attempts. Retry only with a diagnosis: what was wrong, and what this attempt changes to address it. Nothing changed → apply step 13 early. At the cap → step 13.
-21. Worker returns stopped-recoverable → set TicketStoppedRecoverable, no attempt increment; resume within the wall-clock cap, else treat as a failed attempt (step 20).
+21. Worker returns stopped-recoverable → set TicketStoppedRecoverable, no attempt increment; resume within the wall-clock cap, else treat as a failed attempt (step 20). A **window block** — a session limit, quota reset, or provider outage halting a run (worker OR coordinator) with its work-product intact — is stopped-recoverable, never a failed attempt: log the window, schedule the **sweep** (a re-run that processes only the blocked items) at the reset, and book the sweep's result to the same attempt. The wall-clock cap pauses across a logged window.
 22. Open fork → resolve per `references/preferences.md`: 1→3→1 on recorded preferences; code-based and undecided → technical counsel; park-listed → TicketBlockedForStefano + decision packet.
 23. Worker returns envelope-wrong → log the return verbatim on the ticket row first, then rule: accept → write an amendment erratum, amend the ticket, relaunch; reject → the worker complies or blocks. A second rejection → counsel arbitrates by re-deriving the ticket's goal (one line/paragraph: what this implementation must do to the app) before anything parks. An accepted amendment that narrows a proof obligation states what the narrowed proof no longer covers.
 24. Factual defect found in the approved spec → erratum per SKILL.md subtype rules. A defect in a DoD or BLUF line is an acceptance erratum: notify Stefano and park the affected path until his ack; other paths continue.
 25. Append every resolution this tick (1→3→1 logs, counsel transcripts with counsel's own probe ledger, errata) to the feature's Notion page before the tick ends.
 26. When the FIRST riskiest ticket completes → run the one mid-flight adversarial pass before selecting further tickets. A finding → amendment erratum + at most one named repair ticket per finding (parity-legal via step 10).
-27. All tickets TicketCompleted → reconcile docs (every repo doc created this wave has its Notion page) → run the advisory review (its verdict obeys the absence law: checks attempted = checks completed or the verdict is inconclusive) → assemble the decision packet → set State=ReviewReported. Set AwaitingStefano instead only if the spec names an irreversible action. ReviewReported is terminal for routine features (step 2).
+27. All tickets TicketCompleted → reconcile docs (every repo doc created this wave has its Notion page) AND store truth (every ticket row terminal; the feature row's State and Branch match git and PR reality — a wave that ends leaving rows a later session must correct has not closed) → run the advisory review (its verdict obeys the absence law: checks attempted = checks completed or the verdict is inconclusive) → assemble the decision packet → set State=ReviewReported. Set AwaitingStefano instead only if the spec names an irreversible action. ReviewReported is terminal for routine features (step 2).
 
 ## Standing rules
 
