@@ -4,8 +4,8 @@ Each section is a separate explicit decision. Never bundled.
 
 ## Repair
 
-- Authorises: a new plan cycle only. Requires a newly approved plan — new gates (Gate 2 again).
-- Does NOT authorise: any code change before the new plan is approved.
+- Authorises: a new repair cycle only. Requires a new spec version and a new flip.
+- Does NOT authorise: any code change before the new spec version is approved.
 - Notion: Features → State = RepairAuthorized; Approvals row → Artifact = Disposition, Decision = Approved.
 
 ## Accept without install

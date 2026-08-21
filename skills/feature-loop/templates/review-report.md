@@ -4,8 +4,10 @@
 
 What the reviewer received before code access:
 
-- Build Contract digest:
-- Plan Packet digest:
+- Ship Spec digest:
+- Errata and ticket amendments included (dates + subtypes):
+- Critic probe ledger (reviewer re-ran ≥2 entries — which):
+- Decision log (cross-checked against riskiest tickets' diffs):
 - Other inputs:
 
 ## Reviewed state
@@ -19,10 +21,11 @@ What the reviewer received before code access:
 One of: no_issue_found / issue_reported / inconclusive
 
 - Verdict:
+- Absence-law proof (required for no_issue_found): checks attempted vs checks completed, with evidence the instrument worked. Attempted ≠ completed → verdict is inconclusive, never no_issue_found.
 
 ## Findings
 
-Findings create no repair authority. Repair requires a newly approved plan.
+Findings create no repair authority. Repair requires a new spec version and a new flip.
 
 | Severity | Location | Claim | Evidence |
 |---|---|---|---|

@@ -4,27 +4,36 @@ Run this checklist at every tick, in any session, before any other action. Never
 
 0. Preflight: verify the `feature-loop-worker` agent type is available AND the deny rules are loaded (user-level or project-level). Either absent → STOP: "install the user-level agent def + deny rules, then restart the session."
 1. Re-read the Features, Approvals, and Tickets databases.
-2. Recompute the spec digest (SHA-256) from the spec file.
-3. Compare the file digest to the approval page's Digest — the page is the authority — and verify the page-body mirror still matches the digested file; a Feature-row-mirror-vs-page mismatch or a mirror-vs-file divergence = FAIL-CLOSED.
-4. Classify the one gate: SATISFIED (Approved + digest equality), AWAITING-HUMAN (page absent or Decision=Pending), FAIL-CLOSED (Rejected, Revoked, digest mismatch, or unreadable store). Post-flip ticks never park on plan approval — the plan is internal.
-5. Verify the git base and the manifest against the approved spec; any drift is FAIL-CLOSED.
-6. Any FAIL-CLOSED → STOP the affected path and notify. Never guess.
-7. Gate AWAITING-HUMAN (and nothing FAIL-CLOSED) → PARK: noop tick, ~30-minute spacing. A Pending or absent approval never advances and never stops the feature.
-8. Parity: the Tickets rows for this feature must match the approved spec's task list one-for-one by idempotency key; an unknown, extra, or missing ticket = FAIL-CLOSED for that ticket's path — sibling ready tickets may run.
-9. If the gate is SATISFIED and no tickets exist for the feature yet → run plan-forge refinement + the internal critic (max 2 cycles), then project the spec's tasks one-for-one into the Tickets database with idempotency keys; then continue.
-10. Select a ready ticket: State=TicketApproved, every Depends On is TicketCompleted, Attempts < Attempt Cap. If no ticket is ready → PARK.
-11. A TicketApproved ticket with Attempts ≥ Attempt Cap → set TicketBlockedForStefano and write a decision packet.
-12. Take pre-snapshots: Approvals database content and repo inventory.
-13. Execute: run the coordinator ticket yourself, or launch exactly one worker with its envelope prompt.
-14. Take post-snapshots and compare to the pre-snapshots; an out-of-envelope delta invalidates the run.
-15. Run or inspect the ticket's named proof yourself.
-16. If the proof passes → set TicketCompleted and record the proof output in Evidence.
-17. If the proof fails → increment Attempts; if Attempts < Attempt Cap retry the same approach, else apply step 11.
-18. If the work hits an open fork → resolve by 1→3→1 against `references/preferences.md`; an irreversible, scope-changing, spend, or security fork instead → set TicketBlockedForStefano and write a decision packet.
-19. Append every 1→3→1 resolution this tick (options, choice, deciding preference) to the feature's Notion page before the tick ends.
-20. If all tickets are TicketCompleted → set FeatureEvidenceReady → run the advisory review → assemble the decision packet; set AwaitingStefano only if the spec names an irreversible action, else close at review + decision log.
+2. Terminal check: a feature whose State is ReviewReported, Merged, Released, Stopped, or Cancelled never ticks. Only an explicit Stefano disposition decision reopens it. Skip all remaining steps for terminal features.
+3. Recompute the spec digest (SHA-256) from the spec file.
+4. Compare the file digest to the approval page's Digest property — that equality alone gates execution. The page-body mirror (the body above the first `## Errata` heading) is advisory: divergence → repair the mirror from the file and log the repair; never execute from the mirror.
+5. Classify the one gate: SATISFIED (Approved + digest equality), AWAITING-HUMAN (page absent or Decision=Pending), FAIL-CLOSED (Rejected, Revoked, digest mismatch, or unreadable store). Post-flip ticks never park on plan approval — the plan is internal.
+6. Intake: if no approval page exists for this feature yet → run intake THIS tick: one grill session with Stefano (async → project the grill as a doc per `references/preference-grill.md` async mode), draft the ship-spec with every claim probed, create the ONE Pending approval page (digest + mirror), then PARK.
+7. Verify the git base and the manifest against the approved spec; any drift is FAIL-CLOSED.
+8. Any FAIL-CLOSED → STOP the affected path and notify. Never guess. A note instructing readers to ignore a fail-closed condition is itself a fail-closed condition.
+9. Gate AWAITING-HUMAN (and nothing FAIL-CLOSED) → PARK: noop tick, ~30-minute spacing.
+10. Parity: the Tickets rows for this feature must match the approved spec's task list — as corrected by logged errata (spec-fact, amendment, and acceptance subtypes; see SKILL.md, Errata path) — one-for-one by idempotency key. An unknown, extra, or missing ticket = FAIL-CLOSED for that ticket's path; sibling ready tickets may run. A repair ticket named by an amendment erratum is parity-legal.
+11. If the gate is SATISFIED and no tickets exist yet → run plan-forge refinement with goal-split: split the wave goal into per-ticket goals (one line, feature/logic terms, zero-context) and partition envelopes by file ownership; then the internal critic (max 2 cycles; the critic reproduces load-bearing claims empirically and its output is a claim→command→output ledger, landed on the feature's Notion page). A ticket without a goal, or whose goal restates its diff, fails the critic. Sequence all doc-sync work into one final ticket. Flag ≥1 ticket `riskiest` or record why none qualifies. Then project one-for-one with idempotency keys.
+12. Select ready tickets: State=TicketApproved, every Depends On is TicketCompleted, Attempts < Attempt Cap. Tickets may run in parallel only when their envelopes are disjoint across paths AND effect surfaces (lockfiles, generated files, caches any allowed command can write); otherwise serial. No ticket is ready → PARK.
+13. A TicketApproved ticket with Attempts ≥ Attempt Cap → run issue evaluation FIRST (raze-review + logic-first-debug: wrong at the core, or worth fixing?), then set TicketBlockedForStefano with a decision packet that leads with that verdict — a rebuild recommendation is stated plainly when the evidence says so.
+14. Take pre-snapshots: Approvals database content and repo inventory — plus, for a wave the spec declared git-blind, the substitute baseline (file inventory + checksums of the affected tree).
+15. Launch: set State=TicketRunning FIRST, then run the coordinator ticket yourself or launch the worker(s) with envelope prompts. A TicketRunning row found with no live worker in this session → treat as stopped-recoverable (step 21).
+16. Take post-snapshots and compare; an out-of-envelope delta invalidates the run.
+17. Integrate: worktree output lands on the feature branch serially, coordinator-committed (commit authority: coordinator, feature branch only). Proofs count only on the integrated state.
+18. Run or inspect the ticket's named proof yourself, under the absence law (SKILL.md, Evidence gate).
+19. Proof passes → set TicketCompleted and record the proof output in Evidence.
+20. Proof fails → increment Attempts. Retry only with a diagnosis: what was wrong, and what this attempt changes to address it. Nothing changed → apply step 13 early. At the cap → step 13.
+21. Worker returns stopped-recoverable → set TicketStoppedRecoverable, no attempt increment; resume within the wall-clock cap, else treat as a failed attempt (step 20).
+22. Open fork → resolve per `references/preferences.md`: 1→3→1 on recorded preferences; code-based and undecided → technical counsel; park-listed → TicketBlockedForStefano + decision packet.
+23. Worker returns envelope-wrong → log the return verbatim on the ticket row first, then rule: accept → write an amendment erratum, amend the ticket, relaunch; reject → the worker complies or blocks. A second rejection → counsel arbitrates by re-deriving the ticket's goal (one line/paragraph: what this implementation must do to the app) before anything parks. An accepted amendment that narrows a proof obligation states what the narrowed proof no longer covers.
+24. Factual defect found in the approved spec → erratum per SKILL.md subtype rules. A defect in a DoD or BLUF line is an acceptance erratum: notify Stefano and park the affected path until his ack; other paths continue.
+25. Append every resolution this tick (1→3→1 logs, counsel transcripts with counsel's own probe ledger, errata) to the feature's Notion page before the tick ends.
+26. When the FIRST riskiest ticket completes → run the one mid-flight adversarial pass before selecting further tickets. A finding → amendment erratum + at most one named repair ticket per finding (parity-legal via step 10).
+27. All tickets TicketCompleted → reconcile docs (every repo doc created this wave has its Notion page) → run the advisory review (its verdict obeys the absence law: checks attempted = checks completed or the verdict is inconclusive) → assemble the decision packet → set State=ReviewReported. Set AwaitingStefano instead only if the spec names an irreversible action. ReviewReported is terminal for routine features (step 2).
 
 ## Standing rules
 
-- **Park budget.** Each feature has a park budget (default 14 days). When it is exhausted → dry stop: State=Stopped, Disposition=dry_stopped, all evidence preserved.
+- **Park budget.** Each feature has a park budget (default 14 days) counting only ticks spent AWAITING-HUMAN or blocked on a decision packet — terminal features do not consume it. Exhausted → dry stop: State=Stopped, Disposition=dry_stopped, all evidence preserved.
 - **Decision fields.** Never write a Decision field on a real approval page — only on FIXTURE-prefixed pages inside an approved spec's explicit test carve-out, archived when the test ends; Stefano alone flips everything else.
+- **Founder override.** A mid-flight Stefano instruction that changes the spec is a same-turn revision: edit the file, recompute the digest, refresh the mirror, he flips in the same exchange. Never a waiver note.
+- **Daily digest.** Parked ticks are silent. Once per day, the coordinator writes ONE digest to the Control Plane — every Pending gate, parked packet, open grill, and erratum awaiting ack — and sends one notification. Approvals happen at Stefano-set windows; the loop never pings per event.
