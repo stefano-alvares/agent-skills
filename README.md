@@ -4,8 +4,7 @@ Self-authored [Agent Skills](https://code.claude.com/docs/en/skills) for Claude 
 all written by me. Third-party skills are deliberately not vendored here (see
 [Third-party skills](#third-party-skills)).
 
-Most of them are forcing functions: they make a model run the loop a frontier model runs on its own
-— interpret the ask, plan from evidence, verify against reality, close everything — instead of
+Most of them are forcing functions: they make a model run the loop a frontier model runs on its own: interpret the ask, plan from evidence, verify against reality and close everything instead of
 shipping the first plausible output. The rest are personal workflow skills.
 
 ## Skills
