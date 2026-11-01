@@ -5,12 +5,11 @@ description: "Build a three-minute prep pack before a client or prospect convers
 
 # Discussion Pack
 
-One file, read in three minutes on the way to the call. It is prep, not a record. The
-record is `notes.md`, and Step 6 puts it there afterwards.
+One page, read in three minutes on the way to the call. It is prep, not a record. The
+record is the call notes in the client record, and Step 6 puts it there afterwards.
 
-**Read, do not guess.** Every line in the pack traces to a file. Where you are reasoning
-past the evidence, mark it `(inferred)` — the same rule `c3po_vault/clients/README.md`
-sets for brand research, applied here. A pack that invents what a client said is worse
+**Read, do not guess.** Every line in the pack traces to a source. Where you are reasoning
+past the evidence, mark it `(inferred)`. A pack that invents what a client said is worse
 than no pack, because he will say it back to them.
 
 Load `brutal-honesty` for the landmines and the money sections. A prep doc that flatters
@@ -18,38 +17,45 @@ the state of the relationship gets him blindsided in the room.
 
 ## Step 1: Find the client
 
-Locate the folder in `c3po_vault/clients/`. Folders are named `<Brand> - <Person>`, e.g.
-`Ulta Pulta - Kripa`. Fuzzy-match on either half.
+Locate the client in the client record, the business vault (or Plane, if the project uses it). A client is usually
+named `<Brand> - <Person>`, e.g. `Ulta Pulta - Kripa`. Fuzzy-match on either half.
 
-**No matching folder?** Two cases:
+**No matching record?** Two cases:
 
-- A client or lead with no record yet — say so, and offer to create one from
-  `clients/_template/` before prepping. A pack built on nothing is a guess with headings.
+- A client or lead with no record yet — say so, and offer to start one in the client record
+  before prepping. A pack built on nothing is a guess with headings.
 - Not a client at all (uni, a teammate, a collaborator) — skip Step 2, ask him directly
   for who, what they want, and what he wants, then run Steps 3 to 5 from his answers.
-  Write the pack to `outputs/` instead of `clients/`.
+  The pack goes in the reply.
 
-Read `c3po_vault/context/voice.md` if it exists. It governs anything in the pack he might
+Read Stefano's voice profile file if it exists. It governs anything in the pack he might
 say out loud or paste into a message.
 
 ## Step 2: Read the record
 
-In this order. Do not skip `notes.md` — it is the only file that knows what was actually
-said.
+In this order. Do not skip the call notes — they are the only part that knows what was
+actually said.
 
-| File | What you take from it |
+| Part of the client record | What you take from it |
 |---|---|
-| `client.md` frontmatter | `status`, `last_contact`, `next_step`, `next_step_due`, `rate`, `engagement` |
-| `client.md` body | "What they want" versus "What they actually need", Commercials, Risk read |
-| `notes.md` | The two or three newest entries. Every **Flags** and **Next** line, however old |
-| `scope.md` | What is explicitly in, and explicitly out |
-| `brand/profile.md`, `brand/competitors.md` | Only if the conversation is about their brand or positioning |
+| Status fields | `status`, `last_contact`, `next_step`, `next_step_due`, `rate`, `engagement` |
+| Main entry | "What they want" versus "What they actually need", Commercials, Risk read |
+| Call notes | The two or three newest entries. Every **Flags** and **Next** line, however old |
+| Scope | What is explicitly in, and explicitly out |
+| Brand research | Only if the conversation is about their brand or positioning |
 
 Compute days since `last_contact` against today. If `next_step_due` has passed, that is
 the first thing in the pack, not a footnote.
 
-The index at the bottom of `clients/README.md` sometimes carries a one-line summary that
-the client folder does not. Read it too.
+If the record keeps an index or overview of all clients, read that too. It sometimes carries
+a one-line summary that the client's own entry does not.
+
+The studio's client journey (stages, checkpoints, who approves, what written proof each stage
+needs) is mapped in
+`/Users/stefanoalvares/Desktop/Business-projects/studio-ops/docs/drafts/client-journey-map.md`.
+It is a draft proposal until both partners approve it: read it before prepping any client step,
+label what you take from it as proposed, and if it and the client record disagree, stop and
+ask Stefano.
 
 ## Step 3: Force the outcome
 
@@ -88,24 +94,24 @@ belong in a document read while walking.
 - **"<the objection, in their likely words>"** → <the answer, one or two sentences>
 
 ## Money
-**Agreed:** <rate + engagement from client.md, or "nothing agreed">
+**Agreed:** <rate + engagement from the client record, or "nothing agreed">
 **Open:** <what has not been settled>
 **Do not commit to:** <the specific things he must not say yes to today>
 
 ## Landmines
-- <constraint, risk, or sensitivity — with its source file>
+- <constraint, risk, or sensitivity — with its source>
 ```
 
 Rules for the sections that go wrong:
 
 **Questions.** Three, never more. Each one must be answerable only by them, and its answer
 must change what he does next. "What's your budget?" is fine if budget is genuinely open;
-it is filler if `client.md` already records a rate. Cut any question the record answers.
+it is filler if the record already holds a rate. Cut any question the record answers.
 
-**Objections.** Pull from `notes.md` **Flags** lines and the Risk read. If the record shows
-no hesitation yet, write the one objection the scope invites and mark it `(inferred)`.
+**Objections.** Pull from the call notes' **Flags** lines and the Risk read. If the record
+shows no hesitation yet, write the one objection the scope invites and mark it `(inferred)`.
 
-**Money.** Read from `client.md`, never improvised. If `rate: TBD`, say TBD — do not
+**Money.** Read from the client record, never improvised. If `rate: TBD`, say TBD — do not
 suggest a number in the pack. The "do not commit to" line matters most on a friendly call,
 which is where scope gets given away.
 
@@ -113,34 +119,89 @@ which is where scope gets given away.
 family or a favour, that goes at the top of this section and it overrides commercial
 advice everywhere else in the pack.
 
-## Step 5: Write it
+### Website discovery branch
 
-`c3po_vault/clients/<client-slug>/discussion-pack.md`, overwritten each run. It is a
-snapshot for one conversation, not a log — the log is `notes.md`.
+When the conversation is website discovery, onboarding, or an audit discussion, read
+[references/website-discovery.md](references/website-discovery.md) before Step 4. Steps 1 to 3
+still run. The reference supplies the core conversation prompts and the conditional branches
+(no website, existing website, established or missing brand, bookings and integrations), plus
+how to turn confirmed answers into a website/brand brief.
+
+- Select only the prompts and branches that apply, and skip anything the record or his
+  answers already settle. The client should not repeat what is already known.
+- In the pack, the Three questions are the three unanswered prompts that matter most. Other
+  selected prompts go to internal facilitator notes as optional follow-ups. If a shareable
+  question sheet or brief for the client is wanted, it is a client document (below), sized for
+  quick reading: normally one or two pages, a target and not a reason to hide a material
+  decision.
+- Keep technical checks and deeper follow-ups in the internal notes.
+- Close with the 1–3–1 format below when the choices are ready.
+
+## Step 5: Give it
+
+The pack goes in the reply. Save it to the client record only when he asks; then it is a
+snapshot for one conversation, overwritten each run, not a log — the log is the call notes.
 
 If the pack sits on more inference than record, say so at the close in one line: which
-sections are thin and which file would fix them.
+sections are thin and which part of the record would fix them.
 
-Print the outcome line and the three questions. Nothing else.
+If the pack was saved to the record, print only the outcome line and the three questions.
+Nothing else.
 
 ## Step 6: After the conversation
 
-When he comes back, append one entry to `notes.md` in the shape that file already defines
-— newest first, `## <YYYY-MM-DD> — <call | email | meeting | dm>`, with **Present**,
-**Said**, **Decided**, **Flags**, **Next**. Never rewrite an existing entry.
+When he comes back, append one entry to the call notes in the client record, in the shape
+those notes already define — newest first, `## <YYYY-MM-DD> — <call | email | meeting | dm>`,
+with **Present**, **Said**, **Decided**, **Flags**, **Next**. Never rewrite an existing
+entry, and check that the write landed. With no client record, give the entry in the reply.
 
-Then mirror, per `clients/README.md`:
+**No automatic mirroring.** Do not copy the outcome across the record's other notes or into
+other systems on your own. Offer the follow-on updates, and make each one only when he says to:
 
-- Commercial decisions into `client.md` Commercials and frontmatter.
-- Scope decisions into `scope.md`.
-- New `last_contact`, `next_step`, `next_step_due` in `client.md` frontmatter.
-- A `status` change if one is warranted — and on `active`, the README's promotion rule
-  says to create the Notion project entry so execution is tracked outside this folder.
+- Commercial decisions into the record's Commercials and status fields.
+- Scope decisions into the scope note.
+- New `last_contact`, `next_step`, `next_step_due`.
+- A `status` change if one is warranted. A change to `active` does not create a project or
+  entry anywhere else by itself.
 
-Delete nothing. `discussion-pack.md` is overwritten by the next run on its own.
+What was proposed in the call stays a proposal until he confirms it. Delete nothing. A saved
+pack is overwritten by the next run on its own.
+
+## Recommendation: 1–3–1
+
+When a recommendation is useful (the close of a website discovery, the first move after a
+call), use this option format: one priority problem, three credible approaches with their
+tradeoffs and dependencies, and one recommended next step with a completion check. Do not
+fabricate options just to reach three. Before discovery, label the problem provisional;
+after the meeting, call it agreed only when the client confirmed it. Do not prescribe a
+rebuild before weighing targeted improvements that would do the job.
+
+## Clean client documents
+
+When a shareable document for the client is requested (not the pack itself), make a clean
+client-facing artifact. The pack's facilitator material — internal notes, objections,
+audit scores, technical skill names, sales claims — stays in a separate internal section or
+file, never in the exported client copy.
+
+- The business's current brand guidelines are the visual source of truth. Proposed studio
+  styling can be used for a local review draft; say internally that it is a proposal. Never
+  substitute the studio palette for the client's own website identity.
+- Clear title, the client or business name when known, a short purpose, grouped questions,
+  generous whitespace, restrained accent colour, a legible body face, a consistent heading
+  hierarchy. No decorative cover pages or dense grids. Leave room for answers only when the
+  document is meant to be filled in. Keep source links useful and readable.
+- Make the format requested; otherwise a PDF with selectable text if tooling is available.
+  If not, a standalone print-ready HTML file, and say what the format limitation is.
+- Before reporting it ready, look at the exported pages for clipping, awkward breaks,
+  contrast, working links, and accidental internal content. Claude Code: its preview and
+  screenshot tools. Hermes: `node ~/.hermes/tools/shots/shots.cjs <url> <out> <routes>`
+  (1440 and 390 px) on a locally served HTML file. Do not claim a rendered check you did
+  not make.
+- Never send or publish it without his authorization.
 
 ## Boundaries
 
 Not a pitch. Positioning and offer work is `pitch-craft`, and if the conversation needs a
 pitch built first, run that and come back. Not a proposal or a quote. Not a place to
-decide the rate — that decision lives in `client.md` and is his to make.
+decide the rate — that decision lives in the client record and is his to make. Sending,
+commercial commitments and scope changes stay his decision.

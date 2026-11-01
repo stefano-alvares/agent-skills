@@ -1,0 +1,25 @@
+# Third-party skills live here for the harnesses but are not vendored in this repo (see README).
+# Their sources are in .skill-lock.json or the skill frontmatter.
+skills/adhd/
+skills/anatomy/
+skills/code-review/
+skills/codebase-design/
+skills/design-taste-frontend/
+skills/domain-modeling/
+skills/grilling/
+skills/handoff/
+skills/impeccable/
+skills/next-best-practices/
+skills/project-health/
+skills/research/
+skills/resolving-merge-conflicts/
+skills/supabase-postgres-best-practices/
+skills/talk-normal/
+skills/tdd/
+skills/teach/
+skills/unslop/
+skills/vibe-security/
+skills/writing-great-skills/
+archive/vendor/
+archive/profile-local/
+.DS_Store

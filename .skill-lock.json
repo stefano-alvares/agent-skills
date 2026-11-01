@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "skills": {
+    "anatomy": {
+      "source": "wheresryan22/anatomy",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wheresryan22/anatomy.git",
+      "skillPath": "SKILL.md",
+      "skillFolderHash": "e9488296a44211c42701ff71705b7901470ec78f",
+      "installedAt": "2026-10-17T08:59:03.331Z",
+      "updatedAt": "2026-10-17T09:03:39.922Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
+      "installedAt": "2026-10-17T09:03:19.342Z",
+      "updatedAt": "2026-10-17T09:03:19.342Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "cline",
+    "codex",
+    "cursor",
+    "droid",
+    "gemini-cli",
+    "github-copilot",
+    "kilo",
+    "kimi-code-cli",
+    "opencode",
+    "pi",
+    "warp",
+    "zed",
+    "hermes-agent",
+    "claude-code"
+  ]
+}

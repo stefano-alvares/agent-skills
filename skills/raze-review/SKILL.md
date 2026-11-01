@@ -7,11 +7,13 @@ description: "Use when an implementation just finished and needs review before c
 
 Strict re-engineering reviewer with one job: judge the implementation against
 the planned architecture, with authority to order deletion and square-one
-rebuilds. Design spec: `docs/superpowers/specs/2026-08-04-raze-review-design.md`.
+rebuilds. Inputs: the project's specs and docs, AGENTS.md, the batch file in
+`docs/crew/`, and the Kanban board (or Plane, where the project uses it).
 
 **Hard rule: review-only.** No edits, not even "mechanical" deletions. Output
-is a verdict + ledger; execution belongs to mission-systems-cleanup (single
-session) or goal-split → agents (parallel repair).
+is a verdict + ledger; execution belongs to the implementer, under the Repair
+rules at the end of this skill (a short ledger) or through plan-forge (a larger
+or parallel repair).
 
 **Foundational principle: existence is not evidence.** Code being present,
 working, or well-written is never a reason to keep it. The only reasons are:
@@ -25,25 +27,31 @@ Burden of proof is on the file.
 | **A** | after a feature/agent finishes, before commit; dirty tree or named branch | the diff + blast radius (files whose callers/callees the diff touches) |
 | **B** | "audit", clean tree, or explicit whole-repo ask | entire codebase + stagnation scan |
 
+On the studio board a single card is Argus's job. Use mode A for an integrated
+batch of 3 or more cards, or for an area already fixed twice.
+
 ## Phases (run in order, no skipping)
 
 ### 1. Budget load
-Read the project's `brief.md` `budgets:` block (files per feature, LOC flags,
-per-section overrides). Set at planning time by the orchestrator — never
-invent budgets from the code under judgment. Block missing → Phase 2 derives
-them. Universal rule regardless of budgets: **a new dependency is a finding
-unless the plan justifies it.**
+Read the budgets recorded in the batch file or `docs/crew/decided.md` (files
+per feature, LOC flags, per-section overrides). Set at planning time by the
+lead — never invent budgets from the code under judgment. Block missing →
+Phase 2 derives them (docs-derived, a proposal for the owner);
+missing budgets do not block a review or authorize invented ceilings.
+Universal rule regardless of budgets: **a new dependency is a finding unless
+the plan justifies it.**
 
 ### 2. Blind Architect — dispatch subagent, DOCS ONLY
 Spawn a subagent that derives the ideal system without ever seeing code.
 
 Prompt contract:
-> You have never seen this codebase and never will. Read ONLY: brief.md,
-> mission/product/design docs, the logic map, decisions.md, kanban.md, and
-> the budgets block. Do not open, glob, or grep any source directory. Output:
+> You have never seen this codebase and never will. Read ONLY: the batch file,
+> the project's specs/docs and AGENTS.md, mission/product/design docs, the
+> logic map, docs/crew/decided.md, the Kanban board's card list, and the
+> budgets. Do not open, glob, or grep any source directory. Output:
 > (a) the sections that SHOULD exist, one-line responsibility each, the
 > invariant each owns; (b) expected shape per section — ≈files, LOC ceiling,
-> deps allowed (this becomes the budget if brief.md has none); (c) features
+> deps allowed (this becomes the budget if the batch file has none); (c) features
 > the docs do NOT ask for — anything in the implementation matching these is
 > presumptively unnecessary.
 
@@ -65,7 +73,9 @@ across files). No opinions in this phase.
 PR descriptions written by the implementing agent are excluded from every
 phase until after the verdict is emitted.
 
-From decisions.md + kanban.md + kanban-archive.md:
+From `docs/crew/decided.md`, the batch files in `docs/crew/`, and the Kanban
+board's done and archived cards (titles, dates, review findings — not the
+implementer's own summaries):
 - **Repeated-fix register:** same symptom/area in ≥2 fix entries.
 - **Stagnation register (mode B):** debt/cleanup items open >30 days, or
   sections with known problems and no decisions entry since. Signal, not
@@ -75,6 +85,15 @@ From decisions.md + kanban.md + kanban-archive.md:
 
 ### 5. Reconcile — the verdict
 Per section: **KEEP / TRIM / MERGE / REBUILD / DELETE / REBUILD-SATISFIED**.
+
+Lens questions per section: is deterministic logic kept out of prompt or prose
+layers? Are DB and network reads hidden inside logic that should be pure? Are
+client/server, package and route boundaries clean? Is existing infrastructure
+reused, or duplicated (copy-pasted helpers, old fallbacks, route-local domain
+logic)? Do the tests protect invariants and product rules, or incidental
+output? Does each domain decision have a single authority (one module or
+table owns it)? Is the test suite fast enough to run on every change in real
+runtime?
 
 REBUILD-SATISFIED: a repeated-fix-register section where the diff under
 review IS the rebuild — structurally different from the failed prior shape
@@ -93,7 +112,7 @@ Escalation rules, non-negotiable:
    token/design system FIRST. When the diagnosis is inconsistency, additive
    recommendations ("add polish/design") are banned — the recommendation is
    obedience to or consolidation of the existing system. Slop/fidelity
-   *scoring* belongs to impeccable-critic / fidelity-critique, not here.
+   *scoring* belongs to fidelity-critique (and impeccable's critique), not here.
 6. **Symmetric burden:** every KEEP cites its section, budget fit, and
    mission value with the same rigor as every DELETE cites its proof. An
    all-KEEP result must be earned line-by-line, not defaulted — on a repo
@@ -111,13 +130,14 @@ Escalation rules, non-negotiable:
 
 ### 6. Emit
 Blocking verdict: **APPROVE / REQUEST-CHANGES / REBUILD-SECTIONS**.
-Report → `docs/superpowers/reviews/YYYY-MM-DD-<project>-raze-<A|B>.md`.
+Report → the reply or a card comment (the project's canonical record only when
+asked).
 Findings ranked by verdict class — REBUILD/DELETE, then MERGE, then TRIM —
 never by discovery order. The report also carries an **Accepted deviations**
 section (separate from findings): a spec deviation qualifies only when the
 doc was amended in the same change AND both directions are tested — that is
-documented convergence, not a finding. Ledger entry format (goal-split
-compatible):
+documented convergence, not a finding. Ledger entry format (one entry
+per finding, so plan-forge can take the ledger as its backlog):
 
 ```markdown
 ### F<N> — <section>: <verdict>
@@ -129,8 +149,10 @@ compatible):
 - **Owner-decision needed:** yes/no  <budget disputes, stale docs, mission ambiguity>
 ```
 
+Owner-decision findings use the 1-3-1 format: one problem, up to three options, one recommendation.
+
 Budget writeback: if budgets were derived (Phase 2), the ledger's last item
-proposes the block for brief.md — owner decides.
+proposes the block for the batch file — owner decides.
 
 ## Honesty contract
 
@@ -143,6 +165,8 @@ Raze-review-specific applications:
 - Every verdict carries confidence (high/medium/low) + the evidence that
   would flip it. A low-confidence DELETE stays a DELETE with its condition
   named — it does not soften to KEEP.
+  For a cut you cannot prove: treat uncertain deletion as a proposal requiring evidence, not an order.
+  Name the evidence that would settle it.
 - Anything scope prevented checking is listed **UNVERIFIED** in the report.
   Silence about an unchecked area is a lie of omission.
 - Bad news leads: the blocking verdict and worst findings open the report.
@@ -169,10 +193,23 @@ Raze-review-specific applications:
 ## Boundaries
 
 Not a bug hunter (correctness here = fidelity to planned architecture + cut
-safety; logic bugs → /code-review). Not a taste critic (slop scoring →
-impeccable-critic / fidelity-critique / design-ban-audit). Upstream partner:
-logic-map (sections + budgets). Downstream repair routing — the review is
-done, do NOT re-review: 1–3 mechanical findings → fix in a fresh session
-under mission-systems-cleanup's implementation rules (skip its review half);
-larger ledger or any REBUILD → plan-forge with the report as backlog;
-multi-session wave → goal-split (ledger is already goal-split compatible).
+safety; logic bugs go to `diagnose` or to Argus's card review). Not a taste
+critic (scoring goes to fidelity-critique and design-ban-audit). Upstream
+partner: logic-map (sections + budgets). The review is done once: do not
+re-review the repair. Routing: 1 to 3 mechanical findings, fix in a fresh
+session under the Repair rules below; a larger ledger or any REBUILD, plan-forge
+with the report as its backlog.
+
+## Repair rules (for whoever executes the ledger)
+
+1. Implement the recommendation only, unless the owner picks another option.
+2. Keep scope to cleanup. No product features.
+3. Prefer deleting duplication and reusing existing infrastructure over new
+   abstractions.
+4. Add tests only where they protect invariants, boundaries or likely
+   regressions; make pure logic testable without DB or network mocks.
+5. Keep a migration fallback only when it lowers rollout risk.
+6. Verify with the strongest practical checks (typecheck, targeted tests, full
+   tests, build), then run `falsify`.
+7. Hand off: what changed, the value it now gives, what passed, environment
+   or dirty-tree caveats.

@@ -1,9 +1,20 @@
 ---
 name: brand-idiom
-description: "Replaces generic web elements (toggles, card grids, drawers, badges, carousels, paginators, spinners, modals) with components derived from the brand's NATIVE IDIOM — first identifying which \"-ism\" the brand's world actually speaks (physical-object, typographic/editorial, instrument-panel, archival, terminal/digital-native, architectural...), then deriving each element via 1→3→1 brainstorming from three source types: found objects, systems built from the product's own nature, or fully imagined constructs with declared laws. The design move that turns template UI into house UI. Use whenever the user asks for \"unique\", \"creative\", or \"non-generic\" elements, says an element \"feels like every other website\", wants components that feel real or brand-native, asks to redesign a standard control in brand language, or when building any interactive element for a brand that has (or needs) a committed direction. Also use to generate the element inventory when porting a site from mid-fi to high-fi."
+description: >-
+  Use when the user asks for unique, creative or non-generic elements, says an element feels like every
+  other website, wants components that feel real or brand-native, or wants a standard control (toggle,
+  card grid, drawer, badge, carousel, paginator, spinner, modal) redesigned in brand language. Also use when building interactive elements for a brand
+  with a committed direction, or listing the element inventory when porting a site from mid-fi to
+  high-fi. Names the brand's native idiom (physical-object, editorial, instrument, archival, terminal,
+  architectural), then derives each element by 1-3-1 brainstorming from found objects, built systems or
+  declared constructs.
 ---
 
 # Brand Idiom
+
+> **Builder mode.** If you are implementing a card that already names the idiom, do not run the
+> full 1-3-1 walk. Read only step 4 (the fallback contract) and step 6 (the implementation contract), and
+> build inside the named idiom. Run the full walk only when the card asks you to choose or change the idiom.
 
 Generic elements are answers copied from other websites. An idiom-derived
 element is an answer taken from the brand's own world: not "a toggle
@@ -22,8 +33,9 @@ decoration as an answer.
 
 ## Step 0: identify the idiom (the right -ism for THIS brand)
 
-Before any element work, name the brand's **native idiom**: the world
-where the product's substance already lives. This is a finding, not a
+Reuse an idiom already approved in the handoff; do not reopen an approved
+direction. Otherwise, before any element work, name the brand's **native
+idiom**: the world where the product's substance already lives. This is a finding, not a
 style choice — it must be defensible from the brand's actual facts
 (PRODUCT.md, what the product is, who touches it, what its artifacts
 look like in real life), never from aesthetics shopping.
@@ -59,7 +71,9 @@ brand demands it):
 
 **The artifact test** (run it before choosing): what does the user
 physically hold or see in the real-world version of this job? That
-object votes louder than the product category. Process-heavy but
+object votes louder than the product category. For a digital-native
+product the artifact is already on screen (a prompt, a diff, a log), and
+that counts. Process-heavy but
 document-native products (tax filing, insurance claims, legal case
 management, medical records) FEEL like instrument-panel — a real
 external process succeeds or fails — but their users never touch a
@@ -78,6 +92,12 @@ or drift follows.
 
 If the project already has a committed premise/direction in DESIGN.md,
 that decision wins; your job is only to derive within it.
+
+The premise can be found (an object or convention that already exists),
+native (the product's own system, such as a terminal or a ledger of its
+own data) or declared (an imagined construct with stated laws). A
+physical object is one option, not a requirement. This matches
+fidelity-critique rung 4: "a premise (found, native or declared)".
 
 ## The derivation, step by step
 
@@ -256,7 +276,9 @@ source seems obvious.
 
 - fidelity-critique SCORES commitment; this skill CREATES it — run this
   when fidelity-critique says "the next commitment is a premise-derived
-  element." impeccable owns general taste, layout, and slop review.
+  element." A critique does not itself authorize a redesign; use this
+  when that work is requested. Taste critique (general taste, layout, and
+  slop review) belongs to impeccable.
 - This skill designs and specs; building still goes through the project's
   normal build/test/verification discipline. The spec output should name
   files, tokens, fallbacks, and the contract test that will encode the

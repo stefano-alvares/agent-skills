@@ -1,13 +1,16 @@
 ---
 name: fidelity-critique
-description: "Scores UI work on a low-fi → high-fi ladder with evidence-cited grades, and names the single commitment that would move it up a level. Not AI-slop detection (impeccable owns that) — this measures COMMITMENT: physical premise, signature mechanics, token discipline, register grammar, fallback completeness. Use whenever the user asks \"is this high fidelity yet?\", \"why does this look mid-fi / generic / like a template?\", \"critique fidelity\", \"how do I get this from low-fi to hi-fi\", or when UI work is about to be called done and no fidelity check has run. Also use to DEFINE fidelity targets before building. Works on any frontend codebase."
+description: Use when asked to assess visual fidelity or define fidelity targets, to set rung targets
+  before building a premium page, and before premium UI work is called done when no fidelity check
+  has run. Not a mandatory gate for small UI edits.
 ---
 
-> **Not installed as a skill.** The `fidelity-critique` *subagent*
-> (`~/.claude/agents/fidelity-critique.md`) owns this rubric — it runs in fresh context, which is what
-> `critic-pass` requires of a verifier. This file is the long-form reference that subagent reads when a
-> dimension is ambiguous. Deliberately unlinked from `~/.claude/skills/` on 2026-07-30 so one trigger
-> phrase has one outcome. Re-link only if you also retire the subagent.
+> **Cross-harness ownership.** In Claude Code, the `fidelity-critique` subagent
+> (`~/.claude/agents/fidelity-critique.md`) owns the trigger and reads this canonical long-form rubric
+> when a dimension is ambiguous. It is deliberately unlinked from `~/.claude/skills/` so one trigger
+> phrase has one Claude outcome. Hermes may expose this file directly as a skill because it has no
+> equivalent custom-agent surface. Keep this path stable; do not relocate the rubric under any
+> single consumer.
 
 # Fidelity Critique
 
@@ -26,8 +29,9 @@ runs on vibes.
 
 ## The ladder
 
-Score the target 0–5. Each rung has diagnostic tells you can verify in
-source. A design sits at the HIGHEST rung where ALL checks pass — one
+Score the target 0–5 where evidence supports it. Source establishes structural
+commitments, not every rendered appearance or interaction. A verified design
+sits at the HIGHEST rung where ALL checks pass — one
 un-ported page or one unratified rule-violation drags the whole target down
 (inconsistency reads as "unfinished," which is worse than uniformly mid).
 
@@ -52,10 +56,11 @@ rules ("accent X only on grounds Y"), and at least one BAN on a familiar
 pattern, written down and enforced. Still interchangeable: swap the logo
 and another brand could ship it.
 
-**4 — High fidelity.** The design has a **physical premise** — one sentence
-naming a real scene/object/ritual the interface derives from — and at
-least two **signature mechanics** derived from that premise, not from a
-component library. It has a **register grammar**: the house's own answer
+**4 — High fidelity.** The design has a **premise (found, native or declared)**:
+one sentence naming the world the interface derives from (a real
+scene/object/ritual, the product's own native system, or a declared
+construct with stated laws), and at least two **signature mechanics**
+derived from that premise, not from a component library. It has a **register grammar**: the house's own answer
 to "how does inventory render / how do sections announce themselves / what
 is the wayfinding device," different from the category default. Interactive
 mechanics have static-complete fallbacks (touch, reduced-motion, no-JS
@@ -75,9 +80,13 @@ a 5 even when another dimension drags the target); the headline rung is the
 MINIMUM across dimensions, because fidelity is conjunctive: a beautiful
 premise with token chaos still reads unfinished. The table above the
 headline is what protects the wins from a shallow reading. Every score
-requires cited evidence (file:line or a grep result). A score without
-evidence is invalid — that is the anti-taste-drift rule. If you cannot find
-evidence either way, say so and score conservatively.
+requires cited evidence (file:line, a grep result, or an inspected render/test
+with its viewport and state). A score without evidence is invalid — that is
+the anti-taste-drift rule. Missing access or evidence is UNKNOWN, not a zero
+or a pass. Distinguish an observed absence from a surface you could not check.
+If any dimension is unknown, do not assert a verified headline rung; report
+the supported dimension scores and, if useful, a labeled source-only provisional
+assessment. The 0–5 ladder and minimum-across-all-six rule remain unchanged.
 
 **Inconsistency scoring rule** (how much one gap costs): a surface that
 falls back to the category default with no documented house answer caps
@@ -90,14 +99,16 @@ the cap to the headline; never cap the other dimensions' scores to match.
 test files are not violations — bans on copy (em dashes, placeholder
 strings) apply to what a visitor can see. When grepping, triage every hit:
 comment/doc → note and drop; content files, markdown pages, template
-strings, data consumed by templates → violation. When the project builds
-to static output, grepping the build directory settles it.
+strings, data consumed by templates → candidate: trace whether it reaches
+visitor-visible output. A generated static-output match can establish emitted
+content for that build, but not every runtime state or visual property.
 
 1. **Premise.** Is there one sentence, in docs or legible from the code,
-   naming the physical scene the design derives from? Do mechanics derive
-   from it? (Evidence: design docs, CSS comments, mechanic implementations
-   that reference a physical logic — e.g. light behaving like a lamp, not
-   a decoration.)
+   naming the premise (found, native or declared) the design derives
+   from? Do mechanics derive from it? (Evidence: design docs, CSS comments, mechanic implementations
+   that reference the premise's logic, e.g. light behaving like a lamp, a
+   blinking cursor in a terminal brand, or a declared law, not a
+   decoration.)
 2. **Register grammar.** For each list-shaped surface (inventory, nav,
    sections, menus): does it render in a house-specific form, or the
    category default (card grid, hamburger drawer, kicker+heading)? A
@@ -117,7 +128,9 @@ to static output, grepping the build directory settles it.
 5. **Fallback completeness.** Every pointer/hover mechanic: what does it
    look like on touch, under prefers-reduced-motion, before JS runs? The
    rest state must be complete, not broken-waiting-for-input. (Evidence:
-   the media queries and JS guards, or their absence.)
+   the media queries and JS guards, or their absence, establish source intent;
+   exercise the relevant touch, reduced-motion, and pre-JS states to verify
+   the rendered fallback. Mark unexercised behavior unknown.)
 6. **Coherence & truth.** Do docs and code agree (is a source of truth
    declared)? Are the design's own bans enforced everywhere or explicitly
    ratified? Can placeholder/unfinished content reach a rendered page?
@@ -129,19 +142,27 @@ to static output, grepping the build directory settles it.
 1. **Resolve the target** (page, component, or whole app). Read the
    project's design docs first if they exist (DESIGN.md, PRODUCT.md);
    score against the project's own stated rules before generic ones.
-2. **Collect evidence per dimension** — greps, file reads, build/test runs.
-   Do not screenshot unless the user's environment permits it; source
-   evidence is sufficient for every dimension above (that is by design).
-3. **Score the six dimensions** with evidence lines. Minimum = the rung.
+2. **Collect evidence per dimension** — greps, file reads, build/test runs,
+   and permitted rendered/interaction checks. Label source-only evidence.
+   Source presence does not prove contrast, legibility, responsive appearance,
+   or working fallbacks. Do not screenshot unless the environment permits it;
+   if rendered access is missing, state the affected unknowns rather than
+   substituting source inspection for visual verification.
+3. **Score the six dimensions** only where evidence supports them. When all
+   six are verified, minimum = the rung. Otherwise label the headline unverified
+   and distinguish any source-only provisional assessment from rendered proof.
 4. **Name the next commitment.** One paragraph: the single decision that
    moves the target up exactly one rung, phrased as a commitment to make
-   ("choose the physical premise and derive the inventory display from
+   ("choose the premise and derive the inventory display from
    it"), not a list of chores. If the target is at rung 2, the answer is
    almost always a premise + one ban, never "add more polish."
 5. **Report** in this exact structure:
 
 ```
 ## Fidelity: rung N — <rung name>
+
+Evidence scope: <source-only / rendered states checked; exclusions and unknowns>
+If a dimension is unknown: headline UNVERIFIED, not a verified rung N.
 
 | Dimension | Score | Evidence |
 |---|---|---|

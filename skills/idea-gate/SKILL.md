@@ -1,6 +1,6 @@
 ---
 name: idea-gate
-description: "Gate a new idea before any code gets written — six forcing questions, a seven-dimension scorecard, and a build / narrow / shelve verdict filed to Notion. Use when Stefano floats a new project, app, tool, or game; when he asks 'should I build this', 'is this worth doing', 'validate this idea'; or when a half-started project needs a keep-or-kill call. Run BEFORE plan-forge or to-spec — those plan work, this decides whether the work should exist."
+description: "Gate a new idea before any code gets written — six forcing questions, a seven-dimension scorecard, and a build / narrow / shelve verdict. Use when Stefano floats a new project, app, tool, or game; when he asks 'should I build this', 'is this worth doing', 'validate this idea'; or when a half-started project needs a keep-or-kill call. Run BEFORE plan-forge: it plans work, this decides whether the work should exist."
 ---
 
 # Idea Gate
@@ -11,8 +11,11 @@ instead of a month. It ends in a verdict, not encouragement.
 **Honest, not kind.** A weak idea scored honestly is worth more than an encouraging lie.
 Load `brutal-honesty` alongside this if the pull toward agreement shows up.
 
-**Never write code in this skill.** The only output is the verdict and the Notion page. If
-the idea passes, the next step is `plan-forge`, not a build.
+**Never write code in this skill.** The only output is the verdict and its assessment (given in the reply, or
+saved when asked — Step 5). If the idea passes, the next step is `plan-forge`, not a build.
+
+**Do not reopen an already authorized build.** If Stefano has already decided to build it and said so, this
+gate does not apply; the question is closed.
 
 ## Step 0: Mode
 
@@ -22,8 +25,8 @@ Ask which this is, because two dimensions change meaning:
 - **Personal** — a tool for himself, a game, a learning project. "Willingness to pay" becomes
   "will you still use this in a month", "market size" becomes "who else has this problem".
 
-Read `c3po_vault/context/voice.md` if it exists and write the output in that voice. The
-verdict itself stays blunt regardless.
+Read Stefano's voice profile at `~/Desktop/Business-projects/business vault/voice-profile.md`
+if it exists and write the output in that voice. The verdict itself stays blunt regardless.
 
 ## Step 1: The idea
 
@@ -100,22 +103,24 @@ out high, the score is wrong. Re-score.
 
 ## Step 5: File it
 
-Create a page in the Notion **Projects** database under "Project management":
+Save the assessment to the project's canonical record only when asked, else give it in the reply.
+Either way it has the same shape:
 
 - Title: `Idea gate: <idea name>`
 - Body: the idea, all six answers with a one-line read on each, the scorecard table, the
   verdict with reasoning, and the one next action.
-- If the verdict is Build, set the project Status so it enters the normal loop. If Narrow or
-  Shelve, leave it out of active work — the page is the record that the question was asked.
+- The verdict is the record that the question was asked. It does not change any project's
+  status by itself — see "What this does not do".
 
-If Notion is unreachable, write the same page to `outputs/idea-gate-<slug>.md` and say the
-Notion write failed. Never silently skip it.
+If a requested save fails, say so and give the assessment in the reply instead. Never silently
+skip it.
 
 ## Step 6: Close
 
-One line: the verdict and the next action. Nothing else.
+After the assessment, one line: the verdict and the next action. Nothing else.
 
 ## What this does not do
 
-No code. No scaffolding. No stack recommendation. If the verdict is Build, hand off to
+No code. No scaffolding. No stack recommendation. Evaluation is not execution authority: a verdict
+does not create a project, start a build, or change a status. If the verdict is Build, hand off to
 `plan-forge`.

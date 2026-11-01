@@ -1,6 +1,6 @@
 # agent-skills
 
-Self-authored [Agent Skills](https://code.claude.com/docs/en/skills) for Claude Code — 24 skills,
+Self-authored [Agent Skills](https://code.claude.com/docs/en/skills) for Claude Code and Hermes — 23 skills,
 all written by me. Third-party skills are deliberately not vendored here (see
 [Third-party skills](#third-party-skills)).
 
@@ -14,9 +14,8 @@ shipping the first plausible output. The rest are personal workflow skills.
 
 | Skill | What it does |
 |---|---|
-| **frontier-gap** | The operating system. Interpret the request, keep a nothing-skipped ledger, plan by dependency and risk, verify before done. Model-agnostic, with per-model profiles in `references/profiles/`. |
-| **feature-loop** | v0.8. Runs one bounded feature through a governed pipeline: one approval gate up front, then plan → tickets → evidence → review with no further human gates. Notion for control authority, Git for code. |
-| **assembly-line** | Research → draft → polish in fresh contexts with file handoffs, instead of one rotting session. |
+| **frontier-gap** | Recovery for a long task that is dropping requirements or stopping early: re-interpret the ask, keep a nothing-skipped ledger, verify before done. Not something to load before every task. |
+| **feature-loop** | v0.9, archived: explicit opt-in only. Its Notion control plane and the Forge and Raze profiles are retired; `decision-burst.md` and the pre-commit proof hook are worth reusing. |
 
 ### Before code
 
@@ -69,9 +68,10 @@ shipping the first plausible output. The rest are personal workflow skills.
 | **brainiac-learning-intake** | Files a learning resource into my notes system. |
 | **skill-intake** | Evaluates proposed changes to this harness before they land. |
 
-> Seven skills read personal context from a private vault (`c3po_vault/context/…`) and will degrade
-> gracefully or need repointing elsewhere: `plan-forge`, `assembly-line`, `idea-gate`, `pitch-craft`,
-> `voice-profile`, `discussion-pack`, `brainiac-learning-intake`.
+> 31 Oct 2026: the in-place rewrite of 5 Sep to 9 Oct was parked in `git stash` and the 21 Aug
+> originals restored, with references to retired systems (the c3po vault, Notion, Feature Loop, the
+> Forge and Raze profiles, ponytail) repointed. See `docs/skill-evaluations/2026-10-31-rewrite-vs-original.md`.
+> `brainiac-learning-intake` still reads the private vault.
 
 Claims inside these skills are pinned to a published result or a logged real incident —
 `frontier-gap/references/evidence.md` keeps measured findings separate from marketing.

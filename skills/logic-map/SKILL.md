@@ -1,6 +1,6 @@
 ---
 name: logic-map
-description: Turn an app, feature, or spec into a map of its logic — the systems, the invariants each system owns, and the causal chains that must hold for behaviour to be correct — BEFORE choosing or writing code, so implementation becomes a box to fill rather than a thing to invent. Use when starting a feature or app and you want the design right before the code; when comparing two or three ways to split a system and need a reason to pick beyond taste; when a spec, brief, or architecture doc needs turning into something checkable; when you suspect the code and the spec have drifted apart and want the mismatches named; when onboarding onto an unfamiliar codebase and need to understand what it is actually supposed to guarantee; or when the user says "map the logic", "what are the systems here", "plan the logic first", "is this the right architecture", "where do the contracts live", or "the code doesn't matter, get the logic right". Run before plan-forge or /phase-plan — those sequence the work, this decides what is correct. Pairs with logic-first-debug, which consumes the same map to locate faults. Skip for a single-file change with no new invariant.
+description: "Use when starting a feature or app and the design should be right before the code: map the app, feature or spec into its systems, the invariants each system owns, and the causal chains that must hold. Also use when comparing ways to split a system, checking a spec against code that may have drifted, onboarding onto an unfamiliar codebase, or when asked to 'map the logic', 'what are the systems here' or 'where do the contracts live'. Run before plan-forge: the map decides what is correct, plan-forge sequences the work. Skip for a single-file change with no new invariant."
 ---
 
 # Logic Map
@@ -15,23 +15,25 @@ write, which is worth more than any amount of careful coding inside a badly-draw
 
 **Why a map rather than a plan:** a plan sequences work — do this, then that. A map states what must be
 true regardless of order. Plans go stale the moment the order changes; maps only go stale when the
-system's promises change, which is much rarer and much more worth noticing. `frontier-gap` Protocol 3 and
-`/phase-plan` sequence the work; run this first so they sequence the *right* work.
+system's promises change, which is much rarer and much more worth noticing. `plan-forge` sequences the
+work; run this first so it sequences the *right* work.
 
 ## Where the map lives
 
-The vault already has the right home: `projects/<name>/architecture.md`, under a `## Logic map` section,
+The project already has the right home: its architecture or spec file, under a `## Logic map` section,
 next to the `## Invariants` and `## Data shapes & contracts` sections it complements. Don't create a
-parallel document — the architecture file already carries health frontmatter, `depends_on`, and is covered
-by `scripts/vault-health-check.mjs`, so a map that lives there gets flagged when its dependencies move.
+parallel document — a map that lives beside the invariants it complements gets read and updated when they
+move.
 
-For a project with no vault entry, put it at the top of the spec it came from. One map, one home.
+For a project with no architecture or spec file, put it at the top of the spec it came from. One map, one
+home.
 
 ## Phase 1 — Harvest what is promised
 
 Before naming any system, collect the claims the thing is supposed to guarantee. Sources, in priority
-order: `decisions.md` (newest wins — decisions beat briefs), `brief.md` scope, the spec, existing
-`architecture.md` invariants, the product docs. For an existing codebase also read the tests: a test is an
+order: the batch file's Decided section or `docs/crew/decided.md` (newest wins — decisions beat briefs), the
+batch file's scope, the spec, the invariants already in the project's architecture or spec file, the
+product docs. For an existing codebase also read the tests: a test is an
 invariant someone cared enough to freeze.
 
 Write them as **invariants** — statements that must be true after any operation, not features:
@@ -44,8 +46,7 @@ down and flag it, because an unstated invariant is the one no system will own.
 
 ## Phase 2 — Name the systems and give each one a box
 
-A system is anything you can state a contract across. One line each — the same shape `logic-first-debug`
-uses, deliberately, so a map written here is readable by the debugger later:
+A system is anything you can state a contract across. One line each, in a shape a debugger can read later:
 
 ```
 <system> — takes: <input + its invariant> → gives: <output + its invariant> — owns: <invariant(s)> — fails: <throws | degrades | silent>
@@ -87,7 +88,7 @@ product's promise, not all of them; a map of everything is a transcription and n
 
 ## Phase 4 — Attack the map before it becomes code
 
-This is the phase that pays for the skill. Three tests, in order:
+This is the phase that pays for the skill. Four tests, in order (the mismatch test applies to existing code only):
 
 **The violation test** — for each invariant, ask: *can any system violate this without another system
 noticing?* If yes, the design permits the bug, and no amount of careful implementation prevents it
@@ -109,14 +110,9 @@ silently blocks or breaks the outlier. Where do the domain's values live? If the
 column" rather than a type or table, list them by query before trusting the list in your head.
 
 **The mismatch test** (existing code only) — derive a second map from what the code actually does, and
-diff it against the map from Phase 1's promises. Every difference is exactly one of three things, and
-naming which is the deliverable:
-
-| Difference | What it means | Where it goes |
-|---|---|---|
-| Code guarantees something the spec never claimed | An undocumented decision | Append to `decisions.md`, add to the map |
-| Spec claims something the code doesn't guarantee | A bug, or vapour | `logic-first-debug` if it misbehaves; scope if it was never built |
-| Both exist but disagree about the invariant | The dangerous one — two owners | Pick the owner, enforce there, delete the other |
+diff it against the map from Phase 1's promises. Every difference is exactly one of three things: an
+undocumented decision, a bug or vapour, or two owners. Naming which is the deliverable. The table of what
+each means and where it goes is in `references/worked-example.md`.
 
 ## Evidence rules — what a map may claim
 
@@ -169,56 +165,39 @@ and that person is usually you in three months.
 ### Attacks
 **Violations possible:** <invariant → who can break it unnoticed → where to move it>
 **Gaps:** <link → unhandled precondition>
-**Mismatches:** <spec-vs-code differences, classified by the three-row table>
+**Mismatches:** <spec-vs-code differences, each classified: undocumented decision, bug or vapour, or two owners>
 
 ### Decomposition chosen
 <the split, and the rejected alternatives with one-line reasons>
 
-### Budgets  ← write into the project's brief.md
+### Budgets  ← write into the batch file's Decided section or docs/crew/decided.md
 <per-section expected shape: ≈files, LOC ceiling, deps allowed — derived from
-the decomposition, never from existing code. raze-review judges against these.>
+the decomposition, never from existing code. raze-review judges against these.
+A map without them is still a map — missing budgets do not block.>
 ```
 
-Then hand off: `/phase-plan` or `plan-forge` turns the map into ordered steps. Each step's
+Then hand off: `plan-forge` turns the map into ordered steps. Each step's
 done-check writes itself from the map — a step is done when the invariant it was supposed to establish
 actually holds, which is a far better check than "tests pass".
 
-## Worked example (compressed)
+For a team handoff, make the relevant invariant, enforcement owner, failure behavior, and observable acceptance clear to implementers and reviewers. Identify the integrated or reviewed state when a claim depends on implementation. Put this context in the existing assignment or map; do not require a new document or whole-app map.
 
-Spec: "the dashboard shows which projects shipped something this week."
+## Worked example
 
-- **Invariants harvested:** a project appears in the shipped list only if it has a Shipped item dated
-  within the window; the window is the same for every project on one render.
-- **Systems:** vault markdown *owns the ship date* → parser *owns date→calendar-day conversion* →
-  scoring *owns the window comparison* → renderer *owns nothing, pure format*.
-- **Ownership check:** "the window is the same for every project" — owned by nobody. Scoring computes
-  `now` per project. Two projects rendered either side of midnight get different windows. Found on paper,
-  in one line, before any code existed.
-- **Violation test:** can anything break "only if dated in the window"? Yes — the parser returns a
-  timestamp, so scoring compares instants, and any consumer that forgets to normalise re-introduces the
-  timezone bug. Move it: the parser returns a *calendar day in a declared zone*, and the timestamp is not
-  representable in the type. Now the bug can't be written.
-- **Decomposition:** rejected "scoring reads files directly" — fewer boundaries, but it gives scoring two
-  owned invariants (parsing and windowing), so a parsing change would silently alter windowing.
-- **Box:** scoring's contract is `takes: (calendar day, window) → gives: boolean — owns: the comparison`.
-  Any implementation satisfying that is correct, and the eventual `shippedSince()` was interchangeable.
-
-Note the payoff: the same defect that `logic-first-debug`'s example finds *after* it ships is caught here
-by the ownership check, on paper, for the cost of one line.
+The dashboard ship-date example, and the mismatch classification table, are in `references/worked-example.md`.
 
 ## Routing
 
 | Situation | Skill |
 |---|---|
 | What should this system guarantee, and who owns it | **this one** |
-| In what order do we build it | `/phase-plan` (project roadmap) or `plan-forge` (session plan) |
+| In what order do we build it | `plan-forge` |
 | Did the implementation honor this map | `raze-review` — its blind architect reads this map |
-| Something is broken and we don't know where | `logic-first-debug` — it reads this map |
+| Something is broken and we don't know where | `diagnose` |
 | The product behaves wrongly but nothing is broken | `mission-debug` |
 
-`logic-first-debug` is the mirror: this skill writes the map from intent, that one reconstructs it from a
-symptom. Same vocabulary on purpose — a project with a current `## Logic map` makes debugging mostly a
-lookup, because the chain is already written and only needs testing against the symptom.
+A project with a current `## Logic map` makes debugging mostly a lookup, because the chain is already
+written and only needs testing against the symptom.
 
 ## Red flags — you're drawing boxes around code instead of logic
 

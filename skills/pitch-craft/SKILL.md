@@ -1,6 +1,6 @@
 ---
 name: pitch-craft
-description: "Turn a project, offer, or client engagement into one positioning line and a tightened offer — for whom, what category, what benefit, versus what, and which value lever is weakest. Use when Stefano needs to pitch or explain something to someone who does not already know it: a client proposal, a landing headline, a cold email, a README opening line, an application, a portfolio blurb. Also use when copy 'feels generic' or a page cannot say who it is for. Files the result to Notion."
+description: "Turn a project, offer, or client engagement into one positioning line and a tightened offer — for whom, what category, what benefit, versus what, and which value lever is weakest. Use when Stefano needs to pitch or explain something to someone who does not already know it: a client proposal, a landing headline, a cold email, a README opening line, an application, a portfolio blurb. Also use when copy 'feels generic' or a page cannot say who it is for."
 ---
 
 # Pitch Craft
@@ -9,10 +9,11 @@ Two frameworks, one flow. Positioning answers *why this, for whom, instead of wh
 value equation finds which lever is losing the sale. Run positioning first — an offer cannot
 be tightened before it is aimed.
 
-Read `c3po_vault/context/voice.md` if it exists and write all output in that voice. If the
-profile lists banned words, use none of them anywhere in the output.
+Read Stefano's voice profile file if it exists (the `voice-profile` skill builds it) and
+write all output in that voice. If the profile lists banned words, use none of them
+anywhere in the output.
 
-If the thing being pitched has never passed `idea-gate`, say so once and continue. Pitching
+If `idea-gate` is available and the thing being pitched has never passed it, say so once and continue. Pitching
 an unvalidated idea is polishing a guess, but the pitch is still the deliverable he asked for.
 
 ## Part 1: Positioning
@@ -50,8 +51,13 @@ For <target>, <name> is a <category> that helps them <benefit> by <difference>.
 
 One sentence. If it will not fit in one sentence, the target is too broad. Go back.
 
+The sentence is a test of the aim, not a rigid template for the output. Do not force every
+surface (a headline, a cold-email opener, a README line) into that shape; write the copy the
+surface needs, once the line holds.
+
 Then name, in one honest sentence, the weakest part of the position. Not an insult — the
-part a skeptical buyer would press on first.
+part a skeptical buyer would press on first. Honest means a weakness the facts support; do
+not invent one to fill the slot.
 
 ## Part 2: The offer levers
 
@@ -76,25 +82,26 @@ Score each strong, medium, or weak. A lever is weak if the answer was vague, if 
 proof, if the first result is far off, or if the customer does most of the work.
 
 **Name the single weakest lever plainly.** Do not say all four are fine. If they genuinely
-are, the offer is not the problem and the positioning is — say that instead.
+are, the offer is not the problem and the positioning is — say that instead. Name only a
+weakness the answers support; do not invent one for the sake of the format.
 
 Then give two or three **concrete** changes for that one lever. Concrete means a specific
 addition: a named guarantee, a faster first step, a proof point to collect, a piece of work
 moved from the customer to him. "Build more trust" is not a change.
 
-## Part 3: File it
+Guarantees, prices, commercial terms and every other commitment in the output are
+proposals until Stefano authorizes them. Drafting is not permission to send.
 
-Create a page in the Notion **Projects** database (or the **Clients** database, if this is
-client work) under "Project management":
+## Part 3: Deliver it
 
-- Title: `Pitch: <name>`
-- Body: the one-line positioning, the five inputs, why the position should hold, the weakest
+Give the result in the reply. Put it in the project's canonical record only when he asks.
+
+- The one-line positioning, the five inputs, why the position should hold, the weakest
   part, the four levers with their assessments, the weakest lever, and the concrete changes.
 - End with one next move: a headline to test, a section to rewrite, a proof point to collect,
   or a question to ask on the next call.
 
-If Notion is unreachable, write to `outputs/pitch-<slug>.md` and say the Notion write failed.
-
 ## Close
 
-Print the one-line positioning and the one next move. Nothing else.
+Print the one-line positioning and the one next move. Nothing else. When the write-up is
+given in the reply, these two close it: nothing comes after them.

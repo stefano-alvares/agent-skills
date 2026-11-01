@@ -1,19 +1,15 @@
 ---
 name: mission-debug
-description: Diagnose product behaviors that "feel wrong" — flow, explanations, AI outputs, generated content, teaching quality, tone — by tracing the felt symptom to the exact contract, prompt, schema, state rule, or UI affordance that FORCES it, then judging the root cause against the product's own mission docs. Use whenever the user says something "feels wrong/off/broken" about how their app behaves (not crashes), reports that an AI feature misunderstands users or explains badly, asks why a flow is frustrating, wants a "big repair" of product behavior, or asks to find more behaviors like a known-bad one. Also use before rewriting prompts or UX copy in response to a complaint — the wrongness usually lives one layer below where it is felt, and this skill finds that layer first. Not for crashes, test failures, or stack traces — use logic-first-debug when the fault location is unknown or spans systems, systematic-debugging when it is already local — and not for code-structure cleanup (use mission-systems-cleanup).
+description: "Use when a product behavior 'feels wrong' rather than crashes: flow, explanations, AI outputs, generated content, teaching quality or tone. Traces the felt symptom to the contract, prompt, schema, state rule or UI affordance that forces it, then judges the root cause against the product's own mission docs. Use when an AI feature misunderstands users or explains badly, when a flow is frustrating, for a 'big repair' of product behavior, or before rewriting prompts or UX copy in response to a complaint. Not for crashes, test failures or stack traces (use diagnose), and not for code-structure cleanup (use raze-review)."
 ---
 
 # Mission Debug
 
 Systematic debugging for product behavior. The "bug" is not a crash — it's a surface that violates the product's mission: an AI that misunderstands, an explanation that overwhelms, a flow that tests instead of teaches, a revision that can't revise. The user reports a *feeling*; your job is to find the *mechanism*.
 
-**Core principle (the Iron Law, inherited):** no repairs without root cause. A felt wrongness always has a forcing mechanism — a schema, prompt, state rule, or affordance that makes the bad behavior inevitable. Patching the copy on top of a forcing contract is a symptom fix, and symptom fixes are failure.
-
-**Second principle (inherited from mission review):** the standard of judgment is the product's OWN mission, not generic quality. Read the canonical product docs first. A behavior is wrong because it breaks a promise the product makes — name the promise.
-
 ## Hard rule
 
-Diagnose first, always. Produce the diagnosis output before proposing or making any change. If the user already asked for fixes, still diagnose first — then spec repairs at the root layer only.
+Diagnose first, always. Produce the diagnosis output before proposing or making any change. If the user already asked for fixes, still diagnose first — then spec repairs at the root layer only, and (since the fix is authorized) carry them out there.
 
 ## Phase 1 — Reproduce the feeling
 
@@ -39,7 +35,7 @@ Product behavior in AI-driven apps is downstream of a stack of governing artifac
 - If NO → you've found the root. ("The schema can only return a scope — it cannot ask a clarifying question. Given a vague idea the model is FORCED to guess.") Stop descending; this is the repair layer.
 - If YES → the layer below is suspect; keep descending. ("The prompt says *preserve the previous scope* — the misunderstanding the user wants corrected is in context marked keep-this.")
 
-Cite the exact artifact and line: the schema field that doesn't exist, the prompt sentence that forbids, the guard that never fires, the compound question the compiler emitted. If you can't point at it, you haven't found it — you're still describing the symptom.
+Cite the exact artifact and line: the schema field that doesn't exist, the prompt sentence that forbids, the guard that never fires, the compound question the compiler emitted. If you can't point at it, you haven't found it — you're still describing the symptom. A layer that seems to forbid the right behavior is a claim, not yet a finding: verify a restriction against source and runtime evidence before calling the behaviour inevitable.
 
 **Absences force too.** A missing difficulty bound, a missing voice contract, a missing escalation branch are root causes exactly as much as a wrong line. Ask: "what constraint would have prevented this, and where is it?" The answer "nowhere" IS the diagnosis.
 
@@ -47,7 +43,7 @@ Cite the exact artifact and line: the schema field that doesn't exist, the promp
 
 For each root cause, name the specific promise it breaks, quoting the product's own docs. Two questions do most of the work:
 
-- **Does this surface do the product's job, or merely gesture at it?" (e.g., for a teaching product: does this surface TRAIN, or merely TEST? For a trust product: does this surface prove, or merely claim?)
+- **Does this surface do the product's job, or merely gesture at it?** (e.g., for a teaching product: does this surface TRAIN, or merely TEST? For a trust product: does this surface prove, or merely claim?)
 - **Whose skill does this surface assume?** The most common mission bug: the surface demands the exact skill the product exists to build ("the front door hands the learner a blank textarea and grades them on specification — the skill they came to learn").
 
 If a behavior is annoying but breaks no promise, say so and rank it low. Mission-debug is not a polish pass.
@@ -79,7 +75,7 @@ Per behavior, in severity order (mission-breaking first):
 
 Close with: the sibling-sweep list (walked vs suspected), and — for any contested or expensive repair — the 1-3-1 treatment (one problem, three viable repairs with tradeoffs, one recommendation).
 
-Then STOP. Repairs are implemented only after the diagnosis is accepted, and only at the diagnosed layer.
+Then, if only a diagnosis was requested, STOP. Repairs are implemented only after the diagnosis is accepted, and only at the diagnosed layer. If a fix was already authorized, the diagnosis output above is the last gate: proceed to the repair at the diagnosed layer without a separate acceptance step, then retest the target behavior. A consequential change to the product's purpose or scope stays the user's decision either way.
 
 ## Worked example (compressed)
 
@@ -101,6 +97,5 @@ Symptom: *"the AI needs you to be very specific and sometimes doesn't understand
 
 ## Sibling
 
-`logic-first-debug` is the same move — find the layer that *forces* the outcome — aimed at technical logic
-instead of product promises. If a felt-wrongness turns out to be a genuine defect in a causal chain rather
-than an unspecified promise, switch to it.
+If a felt-wrongness turns out to be a genuine defect in a technical causal chain rather than an unspecified
+promise, switch to `diagnose`.
