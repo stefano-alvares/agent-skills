@@ -21,6 +21,16 @@ line): fix it, run the check, done.
 scratch clone (`cp -cR <repo> ~/.hermes/profiles/reviewer/cache/scratch/diag-<card>`), never in the repo
 under review, and reports the fault and the proposed fix as text.
 
+## 0. Start from the scenario (mapped projects)
+
+If the project has `docs/crew/scenarios.json`, find the scenario the symptom breaks and run
+`node ~/.hermes/tools/scenarios/scenarios.mjs check <root> <id> --no-save` (read-only: it writes nothing).
+Its `want` and `expected` are the desired output; its steps are the chain, so the map in step 3 is half
+built already; the first failing step, when probes exist, is your first bracket. A scenario that says met
+while the symptom exists means its check does not cross the broken link: walk its steps against the code.
+No scenario covers the symptom: that is a finding for `logic-map`. After the fix, whoever owns the batch
+(not a reviewer, not a card that does not own the file) re-runs `check` and `sync` so the map shows it met.
+
 ## 1. Build a red loop
 
 Get one command that drives the real code path and asserts the user's exact symptom. Try, roughly in
@@ -100,8 +110,9 @@ Performance: measure a baseline first (timing harness, profiler, query plan), th
 | Two contracts disagreeing | Enforce the invariant on the owning side; let the other rely on it |
 | A link that holds too late | Fix the ordering or trigger, not the value |
 
-Grep the link's other consumers before editing. Write the regression test before the fix, at a seam
-that exercises the real bug pattern; if no such seam exists, that is a finding to report. Watch it fail,
+Grep the link's other consumers before editing. Write the regression test before the fix at a seam
+that exercises the real bug pattern; on a board card, only where the card's `Test seams:` line names a seam,
+otherwise the red loop's output is the proof; a missing seam is a finding to report. Watch it fail,
 fix, watch it pass, then re-run the original red loop on the un-minimised scenario. Then run `falsify`.
 
 Authorization to fix covers the repair; ask again only for changed scope, a reserved decision or a

@@ -1,6 +1,6 @@
 ---
 name: raze-review
-description: "Use when an implementation just finished and needs review before commit; when an app has grown too wide (too many files, excess LOC, features nobody planned); when the same bug or surface has been \"fixed\" more than once and didn't hold; when a project stopped evolving while known debt sits open; or when deciding whether files or whole sections should be deleted, merged, or rebuilt from square one. Review-only — never edits code. Triggers: \"raze review\", \"strict review\", \"audit this repo\", \"is this over-built\", \"should we delete/rebuild this\"."
+description: "Use when an integrated batch or a finished feature needs an architecture review, when an area has been fixed twice and did not hold, when an app has grown too wide (too many files, excess LOC, features nobody planned); when a project stopped evolving while known debt sits open; or when deciding whether files or whole sections should be deleted, merged, or rebuilt from square one. Review-only: never edits code. Triggers: \"raze review\", \"strict review\", \"audit this repo\", \"is this over-built\", \"should we delete/rebuild this\"."
 ---
 
 # Raze Review
@@ -8,7 +8,7 @@ description: "Use when an implementation just finished and needs review before c
 Strict re-engineering reviewer with one job: judge the implementation against
 the planned architecture, with authority to order deletion and square-one
 rebuilds. Inputs: the project's specs and docs, AGENTS.md, the batch file in
-`docs/crew/`, and the Kanban board (or Plane, where the project uses it).
+`docs/crew/`, and the Kanban board.
 
 **Hard rule: review-only.** No edits, not even "mechanical" deletions. Output
 is a verdict + ledger; execution belongs to the implementer, under the Repair
@@ -24,11 +24,14 @@ Burden of proof is on the file.
 
 | Mode | When | Scope |
 |------|------|-------|
-| **A** | after a feature/agent finishes, before commit; dirty tree or named branch | the diff + blast radius (files whose callers/callees the diff touches) |
+| **A** | a finished feature or integrated batch, or an area fixed twice; dirty tree or named branch | the diff + blast radius (files whose callers/callees the diff touches) |
 | **B** | "audit", clean tree, or explicit whole-repo ask | entire codebase + stagnation scan |
 
 On the studio board a single card is Argus's job. Use mode A for an integrated
-batch of 3 or more cards, or for an area already fixed twice.
+batch of 3 or more cards, or for an area already fixed twice. On the studio team, engineering-god runs
+it (its `quality-layer` skill) on Atlas's code batches that touched a mapped area or 8+ files, not the
+lead who built them: the builder's own narrative is not evidence (Phase 4). Stefano may run it on any
+work himself.
 
 ## Phases (run in order, no skipping)
 

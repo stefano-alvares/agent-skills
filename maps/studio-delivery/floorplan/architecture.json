@@ -1,0 +1,214 @@
+{
+ "$schema": "floorplan/architecture@1",
+ "project": {
+  "name": "Studio delivery",
+  "summary": "How a brief from Stefano becomes a preview he judges and a release he ships. Each flow is a scenario he wants, with its check and the last measured result."
+ },
+ "nodes": [
+  {
+   "id": "stefano",
+   "label": "Stefano",
+   "kind": "ui",
+   "summary": "Sends briefs, answers forks, judges every visual card, ships.",
+   "paths": [
+    "telegram/**"
+   ]
+  },
+  {
+   "id": "atlas",
+   "label": "Atlas (lead)",
+   "kind": "service",
+   "summary": "Plans, asks the taste questions, builds the hardest piece, integrates.",
+   "paths": [
+    "atlas/**"
+   ],
+   "details": "Guarantees: Stefano's words reach the workers verbatim, through the batch file.\n\nGuarantees: Every file has one owner across open cards."
+  },
+  {
+   "id": "mason",
+   "label": "Mason (builder)",
+   "kind": "worker",
+   "summary": "Builds one card at a time inside its owned files.",
+   "paths": [
+    "mason/**"
+   ]
+  },
+  {
+   "id": "argus",
+   "label": "Argus (reviewer)",
+   "kind": "service",
+   "summary": "Checks what can be checked; never judges taste.",
+   "paths": [
+    "argus/**"
+   ]
+  },
+  {
+   "id": "repo",
+   "label": "Project repo",
+   "kind": "data",
+   "summary": "The batch file, settled taste calls and the code.",
+   "paths": [
+    "repo/**"
+   ],
+   "details": "Guarantees: A taste verdict is never reopened unless Stefano reopens it."
+  },
+  {
+   "id": "safety",
+   "label": "Safety floor",
+   "kind": "config",
+   "summary": "Blocks publishing and destructive git for every agent.",
+   "paths": [
+    "hermes/**"
+   ],
+   "details": "Guarantees: Only Stefano pushes, publishes or deploys to production. Holds at the last check.\n\nGuarantees: Agents commit and merge only on crew/* branches, in every project repo. BROKEN at the last check."
+  },
+  {
+   "id": "vercel",
+   "label": "Vercel previews",
+   "kind": "external",
+   "summary": "Private preview links for Stefano to click.",
+   "details": "Scenarios through here: Brief to first preview (Met)."
+  }
+ ],
+ "flows": [
+  {
+   "id": "sc-brief-to-preview",
+   "title": "Met: Brief to first preview",
+   "description": "You want: I send a brief and get something I can click, fast. · Expected: A preview link within 35 minutes of his answers to the question round. · Measured: first preview 28 min <= 35 (2026-11-02 11:07)",
+   "steps": [
+    {
+     "node": "telegram/chat.md",
+     "note": "Stefano sends a brief"
+    },
+    {
+     "node": "atlas/SOUL.md",
+     "note": "Atlas reads the batch file and settled taste calls first"
+    },
+    {
+     "node": "telegram/chat.md",
+     "note": "He asks the taste forks in one round, recommendation first"
+    },
+    {
+     "node": "repo/docs/crew/batch-file.md",
+     "note": "The answers go into the batch file [rule: Stefano's words reach the workers verbatim, through the batch file]"
+    },
+    {
+     "node": "atlas/SOUL.md",
+     "note": "Atlas builds the kit and the hardest page himself [rule: Someone notices a late first preview while the batch is still running]"
+    },
+    {
+     "node": "vercel",
+     "note": "Preview deploy; Stefano gets the link"
+    }
+   ]
+  },
+  {
+   "id": "sc-card-to-verdict",
+   "title": "Unchecked: Card to verdict",
+   "description": "You want: Every page I get is judged by me, and what I decide sticks. · Expected: Every visual card gets keep, redo or park from Stefano; a lasting keep becomes one line in decided.md. · Measured: not checked yet (checked by hand)",
+   "steps": [
+    {
+     "node": "atlas/crew-board.md",
+     "note": "Atlas hands out a card naming its files and its signature idea [rule: Every file has one owner across open cards]"
+    },
+    {
+     "node": "mason/SOUL.md",
+     "note": "Mason builds inside those files and commits on the card's crew branch [rule: Agents commit and merge only on crew/* branches, in every project repo]"
+    },
+    {
+     "node": "argus/SOUL.md",
+     "note": "Argus checks the checkable items, one round"
+    },
+    {
+     "node": "atlas/crew-board.md",
+     "note": "Atlas checks the card touched only its files, merges and runs the checks"
+    },
+    {
+     "node": "telegram/chat.md",
+     "note": "Stefano says keep, redo or park"
+    },
+    {
+     "node": "repo/docs/crew/decided.md",
+     "note": "A lasting call becomes one line here [rule: A taste verdict is never reopened unless Stefano reopens it]"
+    }
+   ]
+  },
+  {
+   "id": "sc-only-stefano-ships",
+   "title": "Met: Ship",
+   "description": "You want: Nothing goes public unless I do it. · Expected: Agents cannot push, publish or move main; Atlas sends Stefano the command and he runs it. · Measured: holds: every team profile blocks the dangerous commands, wiring clean (2026-11-02 11:07)",
+   "steps": [
+    {
+     "node": "telegram/chat.md",
+     "note": "Stefano says ship"
+    },
+    {
+     "node": "atlas/SOUL.md",
+     "note": "Atlas sends him the exact command and folder"
+    },
+    {
+     "node": "hermes/deny-list.yaml",
+     "note": "Agents cannot run it themselves [rule: Only Stefano pushes, publishes or deploys to production]"
+    },
+    {
+     "node": "telegram/chat.md",
+     "note": "Stefano runs it"
+    }
+   ]
+  }
+ ],
+ "tour": [
+  {
+   "node": "stefano",
+   "title": "You",
+   "note": "Every scenario starts and ends with you."
+  },
+  {
+   "node": "atlas",
+   "title": "The lead",
+   "note": "Turns your words into a plan and the first preview."
+  },
+  {
+   "node": "safety",
+   "title": "The safety floor",
+   "note": "Why no agent can publish."
+  }
+ ],
+ "annotations": [
+  {
+   "path": "hermes/deny-list.yaml",
+   "note": "Rule enforced here: Only Stefano pushes, publishes or deploys to production",
+   "tags": [
+    "scenario-rule"
+   ]
+  },
+  {
+   "path": "repo/hooks/crew-guard",
+   "note": "Rule enforced here: Agents commit and merge only on crew/* branches, in every project repo",
+   "tags": [
+    "scenario-rule"
+   ]
+  },
+  {
+   "path": "repo/docs/crew/batch-file.md",
+   "note": "Rule enforced here: Stefano's words reach the workers verbatim, through the batch file",
+   "tags": [
+    "scenario-rule"
+   ]
+  },
+  {
+   "path": "repo/docs/crew/decided.md",
+   "note": "Rule enforced here: A taste verdict is never reopened unless Stefano reopens it",
+   "tags": [
+    "scenario-rule"
+   ]
+  },
+  {
+   "path": "atlas/crew-board.md",
+   "note": "Rule enforced here: Every file has one owner across open cards",
+   "tags": [
+    "scenario-rule"
+   ]
+  }
+ ]
+}

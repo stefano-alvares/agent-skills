@@ -1,7 +1,8 @@
 # High-risk review (plan-forge, high-risk mode)
 
-Run before cards or code when the plan touches checkout, payments, forms, auth, personal data or a
-database, or changes 8 or more files. Time box: 20 minutes. The review prepares his decisions; it settles
+Run before cards or code when the plan touches checkout, payments, auth, personal data or a database
+(a form that stores personal data or adds an endpoint counts; one that posts to an existing endpoint does
+not), or changes 8 or more code files. Time box: 20 minutes. The review prepares his decisions; it settles
 none of them, and silence is never approval. Adapted from gstack's plan-eng-review (Garry Tan, MIT;
 `LICENSE-gstack`) and the Atlas fork of 30 Oct 2026, whose trial on a checkout plan caught an unmerged
 prerequisite, a false premise and a contract test the plan would break.
@@ -63,7 +64,8 @@ Recommendation: A, because <engineering preference>
 State: pending · Answer: none
 ```
 
-Ask the top 4 entries in one `clarify` round (outside Telegram, at the end of the report). Unanswered
+Ask the top 4 entries in one question round: with `clarify` when he is on Telegram, otherwise as numbered
+questions at the end of the report (in Claude Code, at the end of the reply). Unanswered
 entries stay pending and the work that depends on them stays unplanned. Record each answer in the ledger,
 update the plan, and add a dated line to `docs/crew/decided.md`.
 

@@ -1,0 +1,189 @@
+{
+  "$schema": "scenarios@1",
+  "rules": [
+    {
+      "id": "r-only-stefano-publishes",
+      "rule": "Only Stefano pushes, publishes or deploys to production",
+      "owner": "safety",
+      "enforced_in": "hermes/deny-list.yaml",
+      "check": {
+        "run": "~/.hermes/tools/scenarios/checks/safety-floor.sh"
+      },
+      "status": "holds",
+      "measured": {
+        "at": "2026-11-02T11:07:26.260Z",
+        "exit": 0,
+        "tail": "holds: every team profile blocks the dangerous commands, wiring clean"
+      }
+    },
+    {
+      "id": "r-crew-branches",
+      "rule": "Agents commit and merge only on crew/* branches, in every project repo",
+      "owner": "safety",
+      "enforced_in": "repo/hooks/crew-guard",
+      "check": {
+        "run": "~/.hermes/tools/scenarios/checks/guard-coverage.sh"
+      },
+      "status": "broken",
+      "measured": {
+        "at": "2026-11-02T11:07:26.260Z",
+        "exit": 1,
+        "tail": "repos without the guard: ~/.hermes/tools/crew-guard/install.sh"
+      }
+    },
+    {
+      "id": "r-words-verbatim",
+      "rule": "Stefano's words reach the workers verbatim, through the batch file",
+      "owner": "atlas",
+      "enforced_in": "repo/docs/crew/batch-file.md"
+    },
+    {
+      "id": "r-verdicts-stick",
+      "rule": "A taste verdict is never reopened unless Stefano reopens it",
+      "owner": "repo",
+      "enforced_in": "repo/docs/crew/decided.md"
+    },
+    {
+      "id": "r-one-owner-per-file",
+      "rule": "Every file has one owner across open cards",
+      "owner": "atlas",
+      "enforced_in": "atlas/crew-board.md"
+    },
+    {
+      "id": "r-preview-on-time",
+      "rule": "Someone notices a late first preview while the batch is still running",
+      "owner": null
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "brief-to-preview",
+      "title": "Brief to first preview",
+      "want": "I send a brief and get something I can click, fast.",
+      "expected": "A preview link within 35 minutes of his answers to the question round.",
+      "steps": [
+        {
+          "node": "telegram/chat.md",
+          "note": "Stefano sends a brief"
+        },
+        {
+          "node": "atlas/SOUL.md",
+          "note": "Atlas reads the batch file and settled taste calls first"
+        },
+        {
+          "node": "telegram/chat.md",
+          "note": "He asks the taste forks in one round, recommendation first"
+        },
+        {
+          "node": "repo/docs/crew/batch-file.md",
+          "note": "The answers go into the batch file",
+          "rule": "r-words-verbatim"
+        },
+        {
+          "node": "atlas/SOUL.md",
+          "note": "Atlas builds the kit and the hardest page himself",
+          "rule": "r-preview-on-time"
+        },
+        {
+          "node": "vercel",
+          "note": "Preview deploy; Stefano gets the link"
+        }
+      ],
+      "check": {
+        "run": "~/.hermes/tools/scenarios/checks/first-preview.sh",
+        "timeout": 180
+      },
+      "status": "met",
+      "measured": {
+        "at": "2026-11-02T11:07:26.260Z",
+        "by": "check",
+        "exit": 0,
+        "secs": 0.2,
+        "tail": "stats: first build card 24 min, first preview 28 min, 3 cards, 0 question calls | median s/call: lead 10.6s, children -, workers 5.3s | images: lead 0, child max 0, worker max 18 | input tokens: lead 2.7M, team 37.5M | last preview at 28 min\nfirst preview 28 min <= 35"
+      }
+    },
+    {
+      "id": "card-to-verdict",
+      "title": "Card to verdict",
+      "want": "Every page I get is judged by me, and what I decide sticks.",
+      "expected": "Every visual card gets keep, redo or park from Stefano; a lasting keep becomes one line in decided.md.",
+      "steps": [
+        {
+          "node": "atlas/crew-board.md",
+          "note": "Atlas hands out a card naming its files and its signature idea",
+          "rule": "r-one-owner-per-file"
+        },
+        {
+          "node": "mason/SOUL.md",
+          "note": "Mason builds inside those files and commits on the card's crew branch",
+          "rule": "r-crew-branches"
+        },
+        {
+          "node": "argus/SOUL.md",
+          "note": "Argus checks the checkable items, one round"
+        },
+        {
+          "node": "atlas/crew-board.md",
+          "note": "Atlas checks the card touched only its files, merges and runs the checks"
+        },
+        {
+          "node": "telegram/chat.md",
+          "note": "Stefano says keep, redo or park"
+        },
+        {
+          "node": "repo/docs/crew/decided.md",
+          "note": "A lasting call becomes one line here",
+          "rule": "r-verdicts-stick"
+        }
+      ],
+      "check": {
+        "manual": "After a batch: every visual card in the batch file has a keep, redo or park from Stefano, and each lasting keep has a line in decided.md."
+      }
+    },
+    {
+      "id": "only-stefano-ships",
+      "title": "Ship",
+      "want": "Nothing goes public unless I do it.",
+      "expected": "Agents cannot push, publish or move main; Atlas sends Stefano the command and he runs it.",
+      "steps": [
+        {
+          "node": "telegram/chat.md",
+          "note": "Stefano says ship"
+        },
+        {
+          "node": "atlas/SOUL.md",
+          "note": "Atlas sends him the exact command and folder"
+        },
+        {
+          "node": "hermes/deny-list.yaml",
+          "note": "Agents cannot run it themselves",
+          "rule": "r-only-stefano-publishes"
+        },
+        {
+          "node": "telegram/chat.md",
+          "note": "Stefano runs it"
+        }
+      ],
+      "check": {
+        "run": "~/.hermes/tools/scenarios/checks/safety-floor.sh",
+        "timeout": 180
+      },
+      "status": "met",
+      "measured": {
+        "at": "2026-11-02T11:07:26.260Z",
+        "by": "check",
+        "exit": 0,
+        "secs": 2.7,
+        "tail": "holds: every team profile blocks the dangerous commands, wiring clean"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "question": "Studio forks need both Stefano and Vidaal. Where is a relayed answer from Vidaal recorded?",
+      "about": [
+        "repo/docs/crew/batch-file.md"
+      ]
+    }
+  ]
+}

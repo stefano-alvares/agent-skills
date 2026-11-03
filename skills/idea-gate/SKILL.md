@@ -25,8 +25,8 @@ Ask which this is, because two dimensions change meaning:
 - **Personal** — a tool for himself, a game, a learning project. "Willingness to pay" becomes
   "will you still use this in a month", "market size" becomes "who else has this problem".
 
-Read Stefano's voice profile at `~/Desktop/Business-projects/business vault/voice-profile.md`
-if it exists and write the output in that voice. The verdict itself stays blunt regardless.
+If the voice-profile skill has a saved profile, read it; otherwise skip this step. When a profile is used,
+write the output in that voice; the verdict itself stays blunt regardless.
 
 ## Step 1: The idea
 

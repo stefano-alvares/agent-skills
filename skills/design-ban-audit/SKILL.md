@@ -25,7 +25,7 @@ g 'background-clip: ?text|bg-clip-text' --include=\*.{css,scss,astro,tsx,jsx,htm
 g 'backdrop-filter|backdrop-blur' --include=\*.{css,scss,astro,tsx,jsx,html}                         # glassmorphism
 g 'transition:.*\b(height|width|top|left|margin|padding)\b' --include=\*.{css,scss}   # layout animation
 g 'transition-all|transition: ?all' --include=\*.{css,scss,astro,tsx,jsx,html}                       # animate-everything
-g 'border[^:]*:[[:space:]]*[2-9]px' --include=\*.{css,scss}  # decorative thick borders
+g 'border(-(top|right|bottom|left))?(-width)?[[:space:]]*:[[:space:]]*[2-9]px' --include=\*.{css,scss}  # decorative thick borders
 g '#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|oklch\(' --include=\*.{css,scss} | grep -v 'tokens\|variables'  # raw colours
 g 'h-screen|100vh' --include=\*.{css,scss,astro,tsx,jsx,html}                                        # use min-h-[100dvh]
 g "addEventListener\(['\"]scroll['\"]|onScroll" --include=\*.{js,jsx,ts,tsx,astro}   # scroll listeners
@@ -44,19 +44,21 @@ Output: one line per hit, `file:line - rule - violation or justification`. Then 
 fixed or justified) or FAIL (list the violations). Use UNVERIFIED only when the files cannot be read. A
 reviewer returns PASS or the single top finding.
 
-When review catches a new mid-fi tell, add it to the project's `docs/crew/bans.md`, and to this list if it
-applies to every site.
+When review catches a new mid-fi tell, a reviewer proposes the new ban line in its return (under Later); the
+builder or Atlas adds it to the project's `docs/crew/bans.md`, and to this list if it applies to every site.
 
 ## Review mode (scoped to a card)
 
 When reviewing a card, a hit counts only on an ADDED line of the card's diff (the core test is
 `git diff -U0 <base>...HEAD -- . | grep -E '^\+' | grep -E '<pattern>'`, plus untracked files from
 `git ls-files -o --exclude-standard`). Pre-existing hits go under Later with a count (whole-repo hits minus
-review-mode hits), never as the gating finding. Whole-repo mode stays for Atlas's once-per-round audit on
-the integrated preview. Read-only: only `git diff` and `git ls-files` run.
+review-mode hits), never as the gating finding. Run the whole-repo count first, before switching to the
+diff-scoped form. Whole-repo mode stays for Atlas's once-per-round audit on the integrated preview.
+Read-only: only `git diff` and `git ls-files` run.
 
 Set `BASE` to the card's base ref, run this block (it replaces `g` and adds the file:line), then run the
-same `g` rule lines from the whole-repo block. It also counts uncommitted edits to tracked files.
+same `g` rule lines from the whole-repo block. It also counts uncommitted edits to tracked files. Review
+mode excludes `md` and `mdx` from the em-dash check: run that line with `--include=\*.{tsx,jsx,html}` only.
 
 ```bash
 BASE=${BASE:?set BASE to the card base ref}; SKIP='^([^:]*/)?(node_modules|\.next|dist|build|out|coverage|\.vercel|\.turbo|\.crew|\.git)/'

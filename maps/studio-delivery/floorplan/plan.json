@@ -1,0 +1,123 @@
+{
+ "$schema": "floorplan/plan@1",
+ "source": "docs/prd.md",
+ "stack": [
+  "Hermes agents on Claude (Atlas on Opus, workers on Sonnet)",
+  "Kanban studio board",
+  "Git repos with crew guard hooks",
+  "Vercel previews",
+  "Telegram"
+ ],
+ "assumptions": [
+  "Stefano reaches Atlas through Telegram; card wakes do not reach the desktop app."
+ ],
+ "questions": [],
+ "files": [
+  {
+   "path": "telegram/chat.md",
+   "name": "Telegram chat with Atlas",
+   "description": "Where Stefano sends a brief and answers Atlas's questions.",
+   "uses": [
+    "atlas/SOUL.md"
+   ],
+   "calls": [
+    "CALL /clarify"
+   ]
+  },
+  {
+   "path": "atlas/SOUL.md",
+   "name": "Atlas's rules",
+   "description": "How the lead plans, asks, builds the hardest piece and hands out cards.",
+   "uses": [
+    "atlas/crew-board.md",
+    "repo/docs/crew/batch-file.md",
+    "repo/docs/crew/decided.md"
+   ],
+   "calls": [
+    "CALL /kanban_create",
+    "CALL /vercel_deploy"
+   ],
+   "services": [
+    "vercel"
+   ]
+  },
+  {
+   "path": "atlas/crew-board.md",
+   "name": "Card playbook",
+   "description": "The card template, branches, ownership checks and merge steps.",
+   "uses": [
+    "repo/docs/crew/batch-file.md"
+   ]
+  },
+  {
+   "path": "repo/docs/crew/batch-file.md",
+   "name": "Batch file",
+   "description": "Stefano's words verbatim, decisions, defaults and the cards for one batch."
+  },
+  {
+   "path": "repo/docs/crew/decided.md",
+   "name": "Settled taste calls",
+   "description": "One line per verdict Stefano gave; never reopened unless he does."
+  },
+  {
+   "path": "mason/SOUL.md",
+   "name": "Mason's rules",
+   "description": "Builds one card inside its owned files and commits on its crew branch.",
+   "uses": [
+    "repo/docs/crew/batch-file.md"
+   ],
+   "calls": [
+    "CALL /kanban_request_review"
+   ]
+  },
+  {
+   "path": "argus/SOUL.md",
+   "name": "Argus's rules",
+   "description": "Checks what can be checked on a card and passes it or sends back one finding."
+  },
+  {
+   "path": "repo/hooks/crew-guard",
+   "name": "Crew guard",
+   "description": "Refuses any agent commit or merge outside crew branches."
+  },
+  {
+   "path": "hermes/deny-list.yaml",
+   "name": "Blocked commands",
+   "description": "Stops every agent from pushing, publishing or throwing away work."
+  }
+ ],
+ "endpoints": [
+  {
+   "method": "CALL",
+   "path": "/clarify",
+   "file": "telegram/chat.md",
+   "name": "Ask Stefano",
+   "description": "Atlas's question round; Stefano taps an answer.",
+   "access": "internal"
+  },
+  {
+   "method": "CALL",
+   "path": "/kanban_create",
+   "file": "atlas/crew-board.md",
+   "name": "Hand out a card",
+   "description": "Puts one bounded job on the studio board for Mason.",
+   "access": "internal"
+  },
+  {
+   "method": "CALL",
+   "path": "/kanban_request_review",
+   "file": "argus/SOUL.md",
+   "name": "Ask for review",
+   "description": "Mason hands the finished card to Argus on the same card.",
+   "access": "internal"
+  },
+  {
+   "method": "CALL",
+   "path": "/vercel_deploy",
+   "file": "atlas/SOUL.md",
+   "name": "Preview deploy",
+   "description": "A private preview link Stefano can click; never the public site.",
+   "access": "internal"
+  }
+ ]
+}

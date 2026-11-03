@@ -1,0 +1,7 @@
+# Floorplan (Hermes patch): the map's sources are tracked, generated files are not.
+*
+!.gitignore
+!architecture.json
+!plan.json
+!descriptions/
+!descriptions/**

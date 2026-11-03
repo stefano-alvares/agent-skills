@@ -1,9 +1,9 @@
-# Consolidating a pile of findings (plan-forge)
+# Consolidating a pile of findings (ship-spec)
 
 Use when several audits, reviews or repair plans on one system have produced little shipped work. After
 the second or third audit, the findings become the problem: they duplicate, go stale, disagree, and
 every session re-reads them instead of landing anything. This turns that inventory into one task list
-where every finding has a disposition. (From the archived ship-spec skill.)
+where every finding has a disposition.
 
 **Core rule: documents are witnesses, the system is the evidence.**
 
@@ -34,8 +34,8 @@ per finding (the claim that would have prevented it) and say they are derived.
 
 ## 4. Dispositions
 
-Every finding lands in exactly one bucket (TASK, DONE, ACCEPTED LOSS, REFUTED; definitions in plan-forge
-step 1). Default task order: land already-built work, then cheap repairs on what is already paid for,
+Every finding lands in exactly one bucket (TASK, DONE, DEFERRED / ACCEPTED LOSS, REFUTED; definitions in
+ship-spec section 4). Default task order: land already-built work, then cheap repairs on what is already paid for,
 then gated spend, then doc-rot closure.
 
 ## Output skeleton
@@ -51,4 +51,4 @@ Mission + definition of shipped (3-5 checkable lines)
 ## 5. Why this order              (one paragraph)
 ```
 
-Write it into the batch file, then continue with plan-forge step 5 on the task list.
+Write it into the batch file's Ship spec, then continue with plan-forge on the task list.

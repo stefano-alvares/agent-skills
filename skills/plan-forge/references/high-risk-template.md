@@ -76,7 +76,8 @@ State: pending · Answer: —
 ## Unresolved decisions that may bite later
 - D<n>: <what is missing>
 
-## Suppressed findings (confidence 3–4)
+## Suppressed findings (confidence 3-4)
+Findings you rate 3 or 4 out of 10 go here, not in the ledger; 1-2 only for a suspected catastrophe.
 - <finding>
 
 ## Completion summary

@@ -1,214 +1,176 @@
 ---
 name: logic-map
-description: "Use when starting a feature or app and the design should be right before the code: map the app, feature or spec into its systems, the invariants each system owns, and the causal chains that must hold. Also use when comparing ways to split a system, checking a spec against code that may have drifted, onboarding onto an unfamiliar codebase, or when asked to 'map the logic', 'what are the systems here' or 'where do the contracts live'. Run before plan-forge: the map decides what is correct, plan-forge sequences the work. Skip for a single-file change with no new invariant."
+description: "Use when starting an app, a big feature or a process and the design should be right before the work; when Stefano wants to see or approve a plan; or when comparing what he wants with what is built. Maps his wanted outcomes into scenarios (flows with a check), the rules each part must guarantee and who owns each, then draws them on a Floorplan map he can read. Also for debugging against the scenarios, checking a spec against drifted code, onboarding, or 'map the logic' / 'what are the systems here'. Run before plan-forge. Skip for a single-file change with no new rule."
 ---
 
 # Logic Map
 
-Code is the cheapest part of a system and the most replaceable. Logic is neither. A codebase where the
-logic is right and the code is ugly can be cleaned up incrementally; a codebase where the code is elegant
-and the logic is wrong has to be rethought, and usually gets patched instead.
+Code is the cheapest part of a system and the most replaceable. Logic is neither. Design the claims the
+system must guarantee and who owns each one; any code that honours them is correct and can be rewritten.
 
-**Core principle:** design the *claims* the system must guarantee and *who owns each one*, then let the
-implementation be whatever fills that box. A well-drawn box makes a whole class of bugs impossible to
-write, which is worth more than any amount of careful coding inside a badly-drawn one.
+A map states what must be true regardless of order; `plan-forge` sequences the work. Run this first so the
+plan builds the right thing.
 
-**Why a map rather than a plan:** a plan sequences work — do this, then that. A map states what must be
-true regardless of order. Plans go stale the moment the order changes; maps only go stale when the
-system's promises change, which is much rarer and much more worth noticing. `plan-forge` sequences the
-work; run this first so it sequences the *right* work.
+This skill has two readers. The agents read `docs/crew/scenarios.json`. Stefano reads the same content
+drawn on a Floorplan map (`floorplan` skill): every part with the rules it guarantees, every scenario as a
+flow with its expected result, its check and the last measured result, and every hole in the design as
+an item under Review. One source, two views.
 
-## Where the map lives
+## Where it lives
 
-The project already has the right home: its architecture or spec file, under a `## Logic map` section,
-next to the `## Invariants` and `## Data shapes & contracts` sections it complements. Don't create a
-parallel document — a map that lives beside the invariants it complements gets read and updated when they
-move.
+| What | Where | Tracked |
+|---|---|---|
+| Scenarios, rules, open questions | `docs/crew/scenarios.json` | yes |
+| Parts, names, descriptions (Floorplan) | `floorplan/architecture.json`, `plan.json`, `descriptions/` | yes |
+| The drawn map | `floorplan/index.html`, `graph.json` | no (generated) |
 
-For a project with no architecture or spec file, put it at the top of the spec it came from. One map, one
-home.
+For a studio process (no repo), the root is `~/.agents/maps/<process>/`. Format and fields:
+`references/scenarios-format.md`. Commands: `node ~/.hermes/tools/scenarios/scenarios.mjs
+<validate|check|set|sync|report> <root>`.
 
-## Phase 1 — Harvest what is promised
+## Phase 1: Harvest what he wants
 
-Before naming any system, collect the claims the thing is supposed to guarantee. Sources, in priority
-order: the batch file's Decided section or `docs/crew/decided.md` (newest wins — decisions beat briefs), the
-batch file's scope, the spec, the invariants already in the project's architecture or spec file, the
-product docs. For an existing codebase also read the tests: a test is an
-invariant someone cared enough to freeze.
+Sources, newest decision wins: the batch file's Decided section and `docs/crew/decided.md`, the batch
+scope, the spec, `CLAUDE.md` or `AGENTS.md` product rules, the product docs. For existing code, also the
+tests: a test is a rule someone cared enough to freeze.
 
-Write them as **invariants** — statements that must be true after any operation, not features:
+Write two kinds of thing:
 
-- Good: "a question is never shown to a learner without a source chunk attached."
-- Bad: "the app shows questions." That's a feature; it can't be violated, so it can't guide a design.
+- **Scenarios**: outcomes he wants, in his words (`want`), with the observable result (`expected`). "I
+  pick a topic and get fresh questions, marked straight away" is a scenario. Map the 3 to 6 that carry
+  the product's promise, not every feature.
+- **Rules**: statements that must hold after any operation. "A question is never shown without a source
+  chunk attached" is a rule; "the app shows questions" is a feature and cannot guide a design.
 
-If a promise only exists in someone's head, that is the most valuable output of this phase — write it
-down and flag it, because an unstated invariant is the one no system will own.
+A promise that exists only in someone's head is the most valuable output: write it down and flag it.
 
-## Phase 2 — Name the systems and give each one a box
+## Phase 2: Name the parts and give each one a box
 
-A system is anything you can state a contract across. One line each, in a shape a debugger can read later:
-
-```
-<system> — takes: <input + its invariant> → gives: <output + its invariant> — owns: <invariant(s)> — fails: <throws | degrades | silent>
-```
-
-The `fails` column declares what a consumer may assume when this system breaks: throw (callers see the
-outage), degrade (callers get a documented default), or silent (callers get nothing and no signal —
-which should be a deliberate choice, almost never the right one). For existing code this column is
-*read*, never assumed — grep names consumers, only their catch blocks classify them.
-
-The `owns` column is where the design happens. Then apply the two rules that do most of the work:
-
-- **Every invariant has exactly one owner.** Two owners means two places to change and two chances to
-  disagree — that is a bug generator, and it is the origin of most "we fixed it but it came back". Zero
-  owners means the invariant is aspirational; the system does not actually guarantee it, whatever the
-  docs say.
-- **The owner should be the narrowest system that *can* enforce it.** An invariant enforced at the
-  database is stronger than one enforced in a service, which is stronger than one enforced in a
-  component, which is barely enforced at all. Push each one down as far as it will go.
-
-Now the boxes exist. Inside a box, implementation is free — any code that honours `takes`/`gives`/`owns`
-is correct, and can be rewritten later without consulting anyone. That freedom is the whole point: it is
-what makes the code disposable and the map durable.
-
-## Phase 3 — Map the causal chains
-
-For each user-visible behaviour, write the chain that must hold, as numbered links naming their mechanism:
+The parts are Floorplan nodes (`architecture.json`): stable, short, dotted ids, because scenarios point at
+them. For each part, know its box:
 
 ```
-1. <trigger>
-2. therefore <claim>     ← because <mechanism, and which system owns it>
-3. therefore <claim>     ← because <mechanism, and which system owns it>
-N. therefore <correct outcome>
+<part> | takes: <input + its rule> | gives: <output + its rule> | owns: <rules> | fails: throws, degrades or silent
 ```
 
-Six to twelve links per behaviour. Every link names its owning system — a link no system owns is a gap in
-the design, discovered on paper instead of in production. Map the two or three behaviours that carry the
-product's promise, not all of them; a map of everything is a transcription and nobody maintains it.
+Put the takes/gives/fails line in the node's `summary` or `details` in plain words. Ownership goes in
+`scenarios.json`: each rule's `owner` is one node id.
 
-## Phase 4 — Attack the map before it becomes code
+- **Every rule has exactly one owner.** Two owners means two places to disagree. No owner means the rule
+  is aspirational: leave `owner` empty and the map shows "Nothing guarantees: ..." under Review.
+- **The owner is the narrowest part that can enforce it.** A database constraint beats a service check,
+  which beats a component check. Set `enforced_in` to the file where it is enforced.
+- For existing code the fails column is read, never assumed: grep finds consumers, only their catch
+  blocks classify them.
 
-This is the phase that pays for the skill. Four tests, in order (the mismatch test applies to existing code only):
+## Phase 3: Write each scenario as a chain
 
-**The violation test** — for each invariant, ask: *can any system violate this without another system
-noticing?* If yes, the design permits the bug, and no amount of careful implementation prevents it
-forever. Move the invariant to a boundary where violating it is structurally impossible — a type that
-can't represent the bad state, a schema constraint, a single chokepoint every caller goes through. This
-is how you choose between designs: prefer the decomposition that makes more invariants *unviolatable*
-rather than the one that reads more nicely.
+Each scenario's `steps` are the causal chain, 4 to 10 links, each on the part that owns it:
 
-**The gap test** — walk each chain and ask what happens when a link's precondition doesn't hold. Empty
-input, second concurrent call, retry after partial failure, clock moving backwards, the dependency being
-down. A chain that only describes the happy path is half a design, and the missing half is where the
-bugs go.
-
-**The domain test** — for each input a chain consumes, enumerate its *actual* value domain — every enum
-member, every mode/board/type value that can reach the link, plus null and absent — and walk the chain
-once per class, not once for the typical value. The class you didn't enumerate (the `Custom` board, the
-legacy row with the null column, the script-only caller) is where a gate designed for the mainstream
-silently blocks or breaks the outlier. Where do the domain's values live? If the answer is "a string
-column" rather than a type or table, list them by query before trusting the list in your head.
-
-**The mismatch test** (existing code only) — derive a second map from what the code actually does, and
-diff it against the map from Phase 1's promises. Every difference is exactly one of three things: an
-undocumented decision, a bug or vapour, or two owners. Naming which is the deliverable. The table of what
-each means and where it goes is in `references/worked-example.md`.
-
-## Evidence rules — what a map may claim
-
-A map (or a spec/plan derived from one) earns trust only if its factual claims survive contact with the
-artifacts they cite. Three rules, each bought by a real spec error:
-
-1. **Artifact claims are read, not remembered.** Any claim citing a file, schema, migration, type, or
-   line is verified by opening it before it goes in the map. A plan that writes data conforming to an
-   existing schema reads the schema's actual types first — a literal union rejects the value you invented
-   for it. Mark anything you could not verify `⚠ assumed`, visibly.
-2. **Cross-artifact claims require reading BOTH artifacts.** "These two migrations can run in either
-   order", "these modules are compatible" — one file's header comment asserting it does not bind the
-   other file's own gate. The contradiction between two artifacts is exactly the kind of fact neither
-   one states.
-3. **A shared-contract change sweeps the whole compile scope.** When the chosen decomposition changes a
-   type or signature, the consumer list spans everything the compiler sees — tests, scripts, eval
-   harnesses — not just runtime paths. `tsconfig`'s `include` is the boundary, not `src/`. The caller
-   you find in `scripts/` after shipping was findable by one grep before.
-
-## Phase 5 — Choose the decomposition
-
-When more than one split is plausible, lay them side by side and compare on these, in order:
-
-1. **Invariants made impossible to violate** — more is better, and this outranks everything below.
-2. **Number of boundaries where two assumptions meet** — fewer is better; every boundary is a place for
-   two systems to disagree.
-3. **Blast radius of the most likely change** — which split confines the change you already expect?
-4. Only then: familiarity, ecosystem, and how pleasant it is to write.
-
-Elegance that loses on 1 and 2 is a trap; it reads well and it generates bugs. Record the rejected
-options and why in one line each — the next person to propose the rejected split deserves the reason,
-and that person is usually you in three months.
-
-## Output format
-
-```
-## Logic map — <feature or app>
-*Derived from: <sources>. Owns: the claims below. Code inside each box is free to change.*
-
-### Invariants
-- <invariant> — owned by <system>
-- <invariant> — owned by <system>  ⚠ unowned / two owners  ← flag, don't hide
-
-### Systems
-<one takes/gives/owns line per system>
-
-### Chains
-<numbered links per behaviour, each naming its owning system>
-
-### Attacks
-**Violations possible:** <invariant → who can break it unnoticed → where to move it>
-**Gaps:** <link → unhandled precondition>
-**Mismatches:** <spec-vs-code differences, each classified: undocumented decision, bug or vapour, or two owners>
-
-### Decomposition chosen
-<the split, and the rejected alternatives with one-line reasons>
-
-### Budgets  ← write into the batch file's Decided section or docs/crew/decided.md
-<per-section expected shape: ≈files, LOC ceiling, deps allowed — derived from
-the decomposition, never from existing code. raze-review judges against these.
-A map without them is still a map — missing budgets do not block.>
+```json
+{ "node": "lib.coverage", "note": "Counts the real past-paper examples for the topic and type",
+  "because": "below the floor the request is refused", "rule": "r-no-fake-coverage",
+  "probe": "npx tsx --test src/lib/as-coverage.test.ts" }
 ```
 
-Then hand off: `plan-forge` turns the map into ordered steps. Each step's
-done-check writes itself from the map — a step is done when the invariant it was supposed to establish
-actually holds, which is a far better check than "tests pass".
+A link no part owns is a design gap found on paper. `probe` is optional: a cheap command that proves this
+link holds. When the scenario's check fails, the probes run in order and the first failing one is
+recorded as the step where it breaks.
 
-For a team handoff, make the relevant invariant, enforcement owner, failure behavior, and observable acceptance clear to implementers and reviewers. Identify the integrated or reviewed state when a claim depends on implementation. Put this context in the existing assignment or map; do not require a new document or whole-app map.
+## Phase 4: Give every scenario a check
 
-## Worked example
+The check is what turns the map into desired against actual:
 
-The dashboard ship-date example, and the mismatch classification table, are in `references/worked-example.md`.
+- **Runnable** (preferred): a test or command. Exit 0 = met; any other exit = not met; exit 3 = could not
+  measure (no data yet). Use the project's offline tests where they exist; write a narrow one where they
+  do not. Never a check that needs secrets or changes live data.
+- **By hand**: `{"manual": "<what to look at>"}`, recorded with `scenarios.mjs set <root> <id> met
+  --evidence "<what was observed>"`. A map where most checks are by hand is a picture, not a board: say
+  so in the report.
+
+**The check must cross every boundary in the chain.** A scenario checked only through its pure functions
+can say met while the link between the screen and the server is broken (pilot, 3 Nov 2026: a renamed query
+parameter stayed "met"). Prefer one check that drives the scenario through its entry point (the route
+handler with I/O stubbed, the CLI command, the page), and give each step that the check does not cross a
+`probe`. `validate` names the steps nothing covers; treat that warning as a gap, not noise. Steps on an
+outside service (`"external": true`) are exempt.
+
+Rules can carry a check too; a failing one shows "Rule broken" under Review.
+
+## Phase 5: Attack the map before it becomes code
+
+1. **Violation test:** can any part break a rule without another noticing? Move the rule to a boundary
+   where breaking it is impossible: a type, a schema constraint, one chokepoint.
+2. **Gap test:** for each step, what if its precondition fails? Empty input, a second concurrent call, a
+   retry after partial failure, the dependency down. A scenario with only the happy path is half a design.
+3. **Domain test:** for each input, walk every value class (every enum member, null, absent, the legacy
+   row), not just the typical one.
+4. **Mismatch test** (existing code): run the checks. Every not-met scenario or broken rule is exactly one
+   of: an undocumented decision, a bug or vapour, or two owners. Name which.
+
+Holes become `questions` (with the node ids they touch) or empty owners; they show under Review on the
+map. A worked example of the invariants and the mismatch table (written before the scenario format,
+so its output shape is older): `references/worked-example.md`.
+
+## Evidence rules
+
+1. Artifact claims are read, not remembered. Open the file before citing it; mark anything unverified
+   `assumed`.
+2. Cross-artifact claims require reading both artifacts.
+3. A shared-contract change sweeps the whole compile scope (`tsconfig` include), tests and scripts too.
+
+## Phase 6: Choose the decomposition
+
+When more than one split is plausible, compare in this order: rules made impossible to violate; number
+of boundaries where two assumptions meet; blast radius of the most likely change; only then familiarity
+and taste. Record rejected splits with one-line reasons in the batch file.
+
+## When it runs, and what Stefano sees
+
+- **Before building** (new app, new process, big feature): make a Floorplan **blueprint** from the brief
+  (`floorplan` skill, blueprint path; in Claude Code read `~/.agents/skills/floorplan/SKILL.md`
+  directly, since the skill is vendored for Hermes), write `scenarios.json` with every scenario at status `planned`,
+  `validate`, `sync`, and open the map for him: `node ~/.agents/skills/floorplan/scripts/open.mjs
+  <root>` (local), or attach a screenshot of the Flows list and Review. **Wait for his OK** on the map
+  before building: this is the one approval gate he chose for planning (2 Nov 2026). Big means a new app,
+  site or process; work touching checkout, payments, auth, personal data, a database or 8+ code files;
+  or a new user-facing flow across 2 or more parts. It runs after `ship-spec` and before `plan-forge`. Everything else (quick and light work inside existing flows) skips the map.
+- **After building** (every round that touched a mapped area): refresh the map from code (`refresh.mjs`,
+  or `--from-code` for the first build from a blueprint), mark recent work (`recent.mjs` and
+  `recent-work.json`, one task per thing he asked for), then `check` and `sync`. Paste the `report` table
+  into the round report: scenarios met, not met, unchecked.
+- **Debugging**: `diagnose` starts from the not-met scenario: its `want` is the desired output, its
+  steps are the chain, the first failing step is the first bracket.
+
+After every change to `scenarios.json` or the map: `validate`, then `sync`. Commit `scenarios.json` and
+the Floorplan sources on the crew branch.
+
+## Budgets
+
+Per-section expected shape (files, LOC ceiling, dependencies allowed), derived from the decomposition,
+never from existing code. Write them into the batch file's Decided section; `raze-review` judges against
+them.
 
 ## Routing
 
 | Situation | Skill |
 |---|---|
-| What should this system guarantee, and who owns it | **this one** |
-| In what order do we build it | `plan-forge` |
-| Did the implementation honor this map | `raze-review` — its blind architect reads this map |
-| Something is broken and we don't know where | `diagnose` |
+| What should this guarantee, who owns it, what does he want | **this one** |
+| Draw or refresh the picture | `floorplan` |
+| In what order to build it | `plan-forge` |
+| Did the build honour the map | `raze-review`, plus `scenarios.mjs check` |
+| Something is broken | `diagnose`, starting from the scenario |
 | The product behaves wrongly but nothing is broken | `mission-debug` |
 
-A project with a current `## Logic map` makes debugging mostly a lookup, because the chain is already
-written and only needs testing against the symptom.
-
-## Red flags — you're drawing boxes around code instead of logic
+## Red flags
 
 | Thought | Reality |
 |---|---|
-| "The systems are just the folders/services we already have" | Then you mapped the implementation, not the logic. Ask what each *guarantees*; some folders own nothing and some invariants live nowhere. |
-| "This invariant is obvious, everyone knows it" | Unwritten invariants have no owner, and unowned invariants are false. Write it. |
-| "We'll handle that edge case in the code" | If a system *can* violate an invariant, eventually it will. Move it to where violating is impossible, then the code doesn't have to remember. |
-| "Both designs are fine, pick either" | Run the violation test. The one that forecloses more bugs wins, even if it reads worse. |
-| "Let me map every feature for completeness" | A map of everything is a transcription nobody updates. Map the promise-carrying behaviours. |
-| "The code and spec disagree, I'll update the spec" | First classify it — undocumented decision, bug, or two owners. Silently updating the spec turns a bug into a documented feature. |
-| "I'll write the map after building, when I know more" | Then it records what you did, not what is correct, and it can never contradict the code — which is the only useful thing a map does. |
-| "The doc/header says so, good enough" | A claim spanning two artifacts is verified by reading both. Repeating one file's comment about another file is how "order does not matter" ships next to a gate that says STOP. |
-| "I checked the callers in src/" | The compiler checks tests, scripts, and eval harnesses too. Sweep the tsconfig scope or the build breaks in the file you skipped. |
+| "The parts are just the folders" | Then you mapped the implementation. Ask what each guarantees. |
+| "This rule is obvious" | Unwritten rules have no owner, and unowned rules are false. |
+| "We'll handle that edge in the code" | If a part can break a rule, it eventually will. Move the rule. |
+| "Map every feature" | A map of everything is a transcription. Map the promise-carrying scenarios. |
+| "The check is hard, I'll mark it by hand" | Then the board is prose. Write the narrow test. |
+| "Code and spec disagree, update the spec" | Classify it first: undocumented decision, bug, or two owners. |
+| "I'll write the map after building" | Then it records what was done, not what is correct, and can never disagree with the code. |
+| "Status says met" | Only if the check ran on the current code and crosses every step. Re-run `check` after every round. |

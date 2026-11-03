@@ -23,9 +23,8 @@ shipping the first plausible output. The rest are personal workflow skills.
 |---|---|
 | **idea-gate** | Gates a new idea before anything gets built — six forcing questions, a scorecard, and a build / narrow / shelve verdict. |
 | **logic-map** | Turns an app or spec into its systems, the invariants each one owns, and the causal chains that must hold. Decides what is correct before code decides it. |
-| **plan-forge** | Session-level planning. The default planner for any multi-file change. |
-| **goal-split** | Splits a backlog into parallel agent goals, partitioned by file ownership rather than by feature, so concurrent sessions do not collide. |
-| **ship-spec** | Consolidates a pile of audits, reviews and repair plans into one authoritative spec that can actually be executed. |
+| **ship-spec** | Step one for substantial work: what ships and how you know it is done (his words numbered, Definition of shipped, ask ledger). Also consolidates a pile of audits into one spec. |
+| **plan-forge** | Step two: plans how and in what order, from the ship spec. Quick mode for 2-3 file changes needs no spec. Parallel sessions split by file ownership (goal-split was merged in). |
 
 ### Debugging
 

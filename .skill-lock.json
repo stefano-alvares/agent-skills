@@ -18,6 +18,15 @@
       "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-10-17T09:03:19.342Z",
       "updatedAt": "2026-10-17T09:03:19.342Z"
+    },
+    "real-sfx": {
+      "source": "Clipwing/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/Clipwing/skills.git",
+      "skillPath": "skills/real-sfx/SKILL.md",
+      "skillFolderHash": "112ad42bf71ee439b75d5a304e2cee69a9ca18e9",
+      "installedAt": "2026-11-03T10:15:00.000Z",
+      "updatedAt": "2026-11-03T10:15:00.000Z"
     }
   },
   "dismissed": {
