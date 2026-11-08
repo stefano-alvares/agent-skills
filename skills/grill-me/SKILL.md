@@ -15,16 +15,19 @@ description: "Use when setting up a new project, onboarding a tool or business a
 
 ## The Pattern
 
-The AI interviews you with increasingly specific questions. The goal is to extract knowledge that lives in your head into markdown files the OS can reference.
+The AI interviews you with increasingly specific questions. The goal is to extract knowledge that lives in your head into durable context every agent can read (see Output).
 
 ### Rules for the Interviewer (AI)
 
 1. **Start broad, then drill down.** First pass: high-level questions about the domain. Second pass: specifics, edge cases, preferences.
-2. **Ask 15-30 questions minimum.** Don't stop at 5. The good stuff comes after question 10.
+2. **Ask 15-30 questions minimum.** Don't stop at 5. The good stuff comes after question 10. Before
+   asking, read what is already saved (memory, the project's README, CLAUDE.md or AGENTS.md,
+   `docs/crew/decided.md`) and skip what it answers: grill the gaps, not the known.
 3. **Play devil's advocate.** Push back on vague answers. "You said X — can you give me a specific example?"
 4. **Extract contradictions.** If something doesn't add up, flag it. "Earlier you said X, now you said Y — which is it?"
 5. **Write as you go.** After every 3-5 questions, update the relevant markdown file with what you've learned. Don't wait until the end.
-6. **End with a summary.** After the interview, produce a structured summary and save it to the vault.
+6. **End with a summary.** After the interview, produce a structured summary and save it where the
+   Output section below says. Never to the archived vault.
 
 ### Question Categories (rotate through these)
 
@@ -71,7 +74,9 @@ C3PO vault folders (`context/`, `projects/`).
 
 1. **Verify:** Read back what you wrote. "Here's what I understood — is this correct?"
 2. **Identify gaps:** "I still don't know about [X]. Should we do another round?"
-3. **Set a review date:** Knowledge goes stale. Set a `review_after` date (30 days for wiki, 14 days for project context).
+3. **Set a review date:** Knowledge goes stale. Write a `review_after: <YYYY-MM-DD>` line into each file
+   you wrote (30 days for standing context, 14 days for project context). Nothing schedules it: the next
+   agent that reads a file past its date says so and offers a refresh round.
 
 ## Gotcha — Don't Overclutter
 
@@ -79,4 +84,5 @@ If a concept or rule already exists in memory, a workflow file, or another skill
 
 ---
 
-*Based on the "Grill Me" pattern by Matt Porigity, adapted by Nate Herk for AI OS setup.*
+*Based on the "Grill Me" pattern by Matt Pocock (github.com/mattpocock/skills), adapted by Nate Herk for
+AI OS setup, then repointed to this harness's memory and project docs.*

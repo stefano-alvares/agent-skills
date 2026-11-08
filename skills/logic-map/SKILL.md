@@ -28,6 +28,15 @@ For a studio process (no repo), the root is `~/.agents/maps/<process>/`. Format 
 `references/scenarios-format.md`. Commands: `node ~/.hermes/tools/scenarios/scenarios.mjs
 <validate|check|set|sync|report> <root>`.
 
+**No scenarios tool on this machine** (it lives in `~/.hermes/tools/scenarios/`, not in this repo, so a
+cloud session or another machine may not have it): keep the same `scenarios.json` by hand. Validate by
+reading it against `references/scenarios-format.md` (every rule one owner or an empty owner, every step a
+node). Check by running each scenario's `check.run` yourself: exit 0 met, 3 could not measure, anything
+else not met; this is the one case where you write `status` and `measured` by hand, with the date and the
+output line that decided it. Skip `sync` and the drawn map: show him the Flows as a table in the reply
+(id, want, status, failing step) and say the map was not drawn. Never mark a scenario met on a check you
+did not run.
+
 ## Phase 1: Harvest what he wants
 
 Sources, newest decision wins: the batch file's Decided section and `docs/crew/decided.md`, the batch
@@ -149,7 +158,12 @@ the Floorplan sources on the crew branch.
 
 Per-section expected shape (files, LOC ceiling, dependencies allowed), derived from the decomposition,
 never from existing code. Write them into the batch file's Decided section; `raze-review` judges against
-them.
+them. One line per part, so raze-review can read it without interpretation:
+
+```
+Budgets (<date>, his OK: yes | proposed):
+- <node id>: ~<n> files, <= <n> LOC per file, deps: none new | <named package and why>
+```
 
 ## Routing
 

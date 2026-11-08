@@ -18,8 +18,9 @@ Skip this skill for a bug with one obvious local cause (a typo, a stack trace na
 line): fix it, run the check, done.
 
 **Read-only role.** A reviewer builds the red loop, adds instrumentation and runs bisect only in a
-scratch clone (`cp -cR <repo> ~/.hermes/profiles/reviewer/cache/scratch/diag-<card>`), never in the repo
-under review, and reports the fault and the proposed fix as text.
+scratch clone (`cp -cR <repo> ~/.hermes/profiles/reviewer/cache/scratch/diag-<card>` on macOS; on Linux
+`cp -a --reflink=auto <repo> <scratch>/diag-<card>`), never in the repo under review, and reports the
+fault and the proposed fix as text.
 
 ## 0. Start from the scenario (mapped projects)
 
@@ -59,9 +60,10 @@ remaining element is load-bearing.
 
 ## 3. Map the logic
 
-If the project already has a `## Logic map` (the `logic-map` skill writes one), read it and check it is
-not older than the code it describes. Otherwise write one now, from contracts (docs, types, tests,
-names), not from the implementation:
+If step 0 found a scenario, its steps and the rules they cite are the start of this map: check them
+against the current code (the map can be older than the code) and fill in the systems below. Older
+projects may instead carry a `## Logic map` section in a spec or architecture file; read it the same way.
+Otherwise write one now, from contracts (docs, types, tests, names), not from the implementation:
 
 ```
 <system> takes: <input + invariant> gives: <output + invariant> owns: <invariant/state> fails: <throws | degrades | silent>
@@ -95,6 +97,9 @@ survives. The fault lives between the last surviving link and the first failing 
 Inside the bracket, write 2 to 4 ranked, falsifiable hypotheses: "If X is the cause, changing Y makes the
 bug disappear." Show them to the user if one is around; do not block on it.
 
+Before any fix, confirm the bracket once with the cheapest read. If it surprises you, your map was wrong:
+go back to step 3.
+
 ## 5. Instrument
 
 Each probe tests one prediction; change one variable at a time. Prefer a debugger or REPL, then targeted
@@ -116,8 +121,7 @@ otherwise the red loop's output is the proof; a missing seam is a finding to rep
 fix, watch it pass, then re-run the original red loop on the un-minimised scenario. Then run `falsify`.
 
 Authorization to fix covers the repair; ask again only for changed scope, a reserved decision or a
-security confirmation. Confirm the bracket once with the cheapest read; if it surprises you, your map was
-wrong: go back to the mapping step (step 3).
+security confirmation.
 
 Three failed fixes means the map is wrong: go back to step 3 and question a contract you assumed.
 

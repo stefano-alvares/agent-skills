@@ -1,8 +1,11 @@
 ---
 name: fidelity-critique
-description: Use when asked to assess visual fidelity or define fidelity targets, to set rung targets
+description: >-
+  Use when asked to assess visual fidelity or define fidelity targets, to set rung targets
   before building a premium page, and before premium UI work is called done when no fidelity check
-  has run. Not a mandatory gate for small UI edits.
+  has run. Also when a page "looks generic", "looks like every AI site", "feels template-y" or "is not
+  premium enough" and the question is why and what to commit to next. Not a mandatory gate for small
+  UI edits.
 ---
 
 > **Cross-harness ownership.** In Claude Code, the `fidelity-critique` subagent

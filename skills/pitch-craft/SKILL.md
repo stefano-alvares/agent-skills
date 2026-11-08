@@ -16,9 +16,14 @@ anywhere in the output.
 If `idea-gate` is available and the thing being pitched has never passed it, say so once and continue. Pitching
 an unvalidated idea is polishing a guess, but the pitch is still the deliverable he asked for.
 
+**Read before asking.** Before Part 1, read what already exists: the project's README or PRODUCT.md, the
+client record, the brief, an idea-gate assessment, the conversation so far. Pre-fill every input you
+can, each with its source, and show them in one block for him to confirm or correct. Then ask, one at a
+time, only the inputs that are missing or vague. Asking him what the README already says wastes the turn.
+
 ## Part 1: Positioning
 
-Ask these one at a time. Wait for each answer.
+Ask the ones not already pre-filled, one at a time. Wait for each answer.
 
 **Category** — What category does this live in? Name something a buyer already understands
 (project management tool, brand photography, fractional CFO). Not a slogan.
@@ -105,3 +110,6 @@ Give the result in the reply. Put it in the project's canonical record only when
 
 Print the one-line positioning and the one next move. Nothing else. When the write-up is
 given in the reply, these two close it: nothing comes after them.
+
+*Positioning inputs follow April Dunford's* Obviously Awesome; *the value equation is Alex Hormozi's*
+($100M Offers).

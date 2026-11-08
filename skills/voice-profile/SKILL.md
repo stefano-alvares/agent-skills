@@ -60,7 +60,11 @@ as unmeasured. Tell him at the close how to sharpen it later.
 
 ## Step 4: Count
 
-From the samples, by counting — not by impression:
+From the samples, by counting — not by impression. Models miscount by eye, so run the counter and
+copy its numbers: save each sample as a text file and run
+`python3 scripts/measure.py <sample1> <sample2> ...` from this skill's folder (stdlib only; `-` reads
+stdin). It prints everything below except whether he leads with the claim, which you judge by reading.
+Where the script cannot run, count by hand and say in the file that the numbers are hand-counted.
 
 - Average sentence length in words. State the number.
 - Longest and shortest sentence. The spread matters more than the mean.

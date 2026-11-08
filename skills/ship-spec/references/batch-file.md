@@ -31,4 +31,12 @@ Weakest point: <the assumption that, if false, breaks the sequence>
 
 ## Log
 - <date> <locked decision, failed approach and why, deviation and why>
+
+## Close-out  (falsify step 7, at batch end)
+Definition of shipped:
+- <line> -> met | not met | needs his eye  (<the check you ran, the output that matters>)
+Ask ledger: <# -> DONE | open (why) | DEFERRED (his reason)>
+Learned:
+- <failure class the batch hit> -> <the check that would have caught it earlier>
+- Proposed skill change (for skill-intake): <skill, the gap, the evidence>, or none
 ```

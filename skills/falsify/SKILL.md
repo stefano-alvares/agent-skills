@@ -4,7 +4,7 @@ description: >-
   Use when about to call work done, green or passing: especially when the only evidence is tests you
   wrote yourself or tests on mocks, after adding a guard or invariant at one call site, or when checking
   another agent's completion claim. The one done-gate: get a real signal, scan siblings, break each
-  test, report verified and unverified surface.
+  test, report verified and unverified surface; at the end of a batch, close its ship spec.
 ---
 
 # Falsify
@@ -56,7 +56,8 @@ For every test the claim rests on:
    run the test, confirm it goes red, and revert. A test that stays green under the mutation asserts
    the call you made, not the behaviour you meant. Rewrite it.
    Read-only role (reviewer): `cp -cR <repo> ~/.hermes/profiles/reviewer/cache/scratch/mut-<card>`
-   (APFS clone, fast, node_modules included), apply the mutation there, run the test, delete the clone.
+   (APFS clone, fast, node_modules included; on Linux `cp -a --reflink=auto <repo> <scratch>/mut-<card>`),
+   apply the mutation there, run the test, delete the clone.
    Never mutate the repo under review. Builders mutating in place: `cp <file> <scratch>/<name>.orig`,
    mutate, run, `cp` it back (git restore and checkout are denied), then confirm `git diff --stat`
    matches what it was before.
@@ -94,6 +95,21 @@ Apply the must-fixes and re-run the signal from step 1. A fix you did not re-run
 change. Re-run once after fixes. If a must-fix remains, report it; do not start a third pass. In a
 read-only role (Argus), report the repair instead of making it.
 
+## 7. Close the spec (when this pass ends a batch)
+
+A batch with a ship spec (`docs/crew/<date>-<slug>.md`) is not done when the last card is green. It is
+done when its spec is closed:
+
+1. Run the check on every **Definition of shipped** line now and record met, not met, or needs his eye
+   (a taste line he approves on a preview stays "needs his eye" until he has). On a mapped project,
+   `scenarios.mjs check` and `report` are part of this step.
+2. Walk the **ask ledger**. Every TASK row ends DONE (with the check you just ran), still open (with
+   why), or DEFERRED (with his reason). An ask nobody touched is a silent scope cut: it leads the report.
+3. Write the batch file's `## Close-out` (skeleton in `ship-spec`'s `references/batch-file.md`): the
+   results above, and under **Learned** one line per failure class the batch hit: what broke and the
+   check that would have caught it earlier. A line that exposes a gap in a skill is written as a
+   proposed skill change for `skill-intake`, not edited into the skill now.
+
 ## Required completion report
 
 Never report "done", "green" or a test count on its own. Fill all three:
@@ -102,6 +118,7 @@ Never report "done", "green" or a test count on its own. Fill all three:
   mutation results).
 - **Unverified surface:** column 4 from step 3, traces, and anything deliberately not tested.
 - **Not run:** checks you skipped, and why.
+- **Spec** (batch end only): each Definition of shipped line with its result, from step 7.
 
 An empty Unverified line is a claim that the doubles model reality completely. Write that claim out or
 fill the line. Report in the `brutal-honesty` register: failures first.

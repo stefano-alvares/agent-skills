@@ -36,7 +36,8 @@ understood yet: ask before writing anything else.
 Three to five checkable lines, written before any task: what he will click, open or run to know the work
 is over. Each line names its check (a URL at a viewport, a command and its expected output, a row count).
 "Looks good" is not a line; "he approves the preview" is, when taste is the point. On a mapped project
-(`docs/crew/scenarios.json`), the scenarios the batch touches being met is one of the lines.
+(`docs/crew/scenarios.json`), the scenarios the batch touches being met is one of the lines. These lines
+are closed at batch end by `falsify` step 7, which runs each check and writes the Close-out.
 
 ## 4. Ask ledger
 
@@ -70,8 +71,9 @@ the system needs `raze-review`, not another document.
 ## 7. Hand off
 
 If he asked for the spec to review, stop and show it: the mission, the Definition of shipped and the
-Needs-your-call list first. A new app, site or process, or a big feature (checkout, payments, auth,
-personal data, a database, 8+ code files, or a new user-facing flow): `logic-map` next. It turns the spec
+Needs-your-call list first. A new app, site or process; work touching checkout, payments, auth, personal
+data, a database or 8+ code files; or a new user-facing flow across 2 or more parts (`logic-map` owns
+this definition: change it there first, then here): `logic-map` next. It turns the spec
 into scenarios on a map, and his OK on the map and the Needs-your-call list come in one round. Otherwise
 continue into `plan-forge` in the same turn; it reads this section and does not redo it.
 

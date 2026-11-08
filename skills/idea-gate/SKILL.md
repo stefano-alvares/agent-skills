@@ -1,6 +1,6 @@
 ---
 name: idea-gate
-description: "Gate a new idea before any code gets written — six forcing questions, a seven-dimension scorecard, and a build / narrow / shelve verdict. Use when Stefano floats a new project, app, tool, or game; when he asks 'should I build this', 'is this worth doing', 'validate this idea'; or when a half-started project needs a keep-or-kill call. Run BEFORE plan-forge: it plans work, this decides whether the work should exist."
+description: "Gate a new idea before any code gets written — six forcing questions, a seven-dimension scorecard, and a build / narrow / shelve verdict. Use when Stefano floats a new project, app, tool, or game; when he asks 'should I build this', 'is this worth doing', 'validate this idea'; or when a half-started project needs a keep-or-kill call. Run BEFORE ship-spec and plan-forge: they define and plan work, this decides whether the work should exist."
 ---
 
 # Idea Gate
@@ -12,7 +12,8 @@ instead of a month. It ends in a verdict, not encouragement.
 Load `brutal-honesty` alongside this if the pull toward agreement shows up.
 
 **Never write code in this skill.** The only output is the verdict and its assessment (given in the reply, or
-saved when asked — Step 5). If the idea passes, the next step is `plan-forge`, not a build.
+saved when asked — Step 5). If the idea passes, the next step is `ship-spec` (what ships and how he will
+know it is done), then `plan-forge`. Never a build.
 
 **Do not reopen an already authorized build.** If Stefano has already decided to build it and said so, this
 gate does not apply; the question is closed.
@@ -34,7 +35,9 @@ write the output in that voice; the verdict itself stays blunt regardless.
 
 ## Step 2: Six forcing questions
 
-One at a time. Wait for each answer. Do not batch. Vague answers are normal on the first
+One at a time. Wait for each answer. Do not batch. If the conversation, a brief or the project's
+docs already answer a question, show the answer you found with its source and ask him only to confirm
+or correct it; do not make him repeat himself. Vague answers are normal on the first
 pass — push **once** with the follow-up, then move on. Do not soften a question to make it
 comfortable. Comfort means the question landed shallow.
 
@@ -96,7 +99,9 @@ Score it that way.
 - **Below 14 — Shelve it.** Say why plainly. If an adjacent problem is worth more, name it.
 
 Do not soften the verdict. Do not average away a 1 with a 5 and call it fine — a single
-dimension scoring 1 or 2 is usually the whole answer. Name it.
+dimension scoring 1 or 2 is usually the whole answer. Name it. **Cap rule:** a 1 on Problem severity
+or on Willingness to pay (personal mode: "still use it in a month") caps the verdict at Narrow, however
+high the total. Nobody needs it, or nobody will keep using it, is not fixed by a good score elsewhere.
 
 Cross-check the total against the six answers. If most answers were vague but the score came
 out high, the score is wrong. Re-score.
@@ -122,5 +127,5 @@ After the assessment, one line: the verdict and the next action. Nothing else.
 ## What this does not do
 
 No code. No scaffolding. No stack recommendation. Evaluation is not execution authority: a verdict
-does not create a project, start a build, or change a status. If the verdict is Build, hand off to
-`plan-forge`.
+does not create a project, start a build, or change a status. If the verdict is Build and he wants to
+go ahead, hand off to `ship-spec`.

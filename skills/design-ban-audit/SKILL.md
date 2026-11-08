@@ -27,6 +27,8 @@ g 'transition:.*\b(height|width|top|left|margin|padding)\b' --include=\*.{css,sc
 g 'transition-all|transition: ?all' --include=\*.{css,scss,astro,tsx,jsx,html}                       # animate-everything
 g 'border(-(top|right|bottom|left))?(-width)?[[:space:]]*:[[:space:]]*[2-9]px' --include=\*.{css,scss}  # decorative thick borders
 g '#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|oklch\(' --include=\*.{css,scss} | grep -v 'tokens\|variables'  # raw colours
+g '\[(#[0-9a-fA-F]{3,8}|rgba?\(|hsla?\(|oklch\()' --include=\*.{tsx,jsx,astro,html}                  # raw colours as Tailwind arbitrary values
+g "style=\{?\{?[^}]*(#[0-9a-fA-F]{3,8}\b|rgba?\()" --include=\*.{tsx,jsx,astro,html}                  # raw colours in inline styles
 g 'h-screen|100vh' --include=\*.{css,scss,astro,tsx,jsx,html}                                        # use min-h-[100dvh]
 g "addEventListener\(['\"]scroll['\"]|onScroll" --include=\*.{js,jsx,ts,tsx,astro}   # scroll listeners
 g "$(printf '\342\200\224')" --include=\*.{tsx,jsx,html,md,mdx}   # em dashes (U+2014) in copy
